@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QWidget>
 //#include <browser.h>
+#include<videoplayer.h>
 
 
 class MDIArea : public QMdiArea {
@@ -152,6 +153,7 @@ public:
             start->addAction("Quit");
             start->addAction("Terminal");
             start->addAction("Web Browser");
+            start->addAction("Media Player");
             // Add other actions...
 	    connect(start, &QMenu::triggered, this, &MainWindow::start);
 
@@ -202,6 +204,8 @@ private:
             add_terminal();
         } else if (action->text() == "Web Browser") {
             //add_tabbed_browser();
+        } else if (action->text() == "Media Player") {
+	    addMediaPlayer();
         } else if (action->text() == "Quit") {
             qApp->quit();
         }
@@ -292,16 +296,16 @@ private:
             qDebug() << e.what();
         }
     }*/
-   /*    void addMediaPlayer() {
+       void addMediaPlayer() {
         try {
-            auto widget = new VideoPlayer();
-            addSubWindow(widget, "Video Player");
+            VideoPlayer* widget = new VideoPlayer();
+            add_sub_window(widget, "Video Player");
         } catch (const std::exception& e) {
             qDebug() << "App::addMediaPlayer";
             qDebug() << e.what();
         }
     }
-
+/*
     void addVncClient() {
         try {
             auto widget = new VncClient();
