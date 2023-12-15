@@ -269,15 +269,14 @@ private:
             font.setPointSize(6);
             console->setTerminalFont(font);
             console->setColorScheme("Linux");
-	    /*
-            QObject::connect(console, &QTermWidget::termKeyPressed, mainWindow,
+            connect(console, &QTermWidget::termKeyPressed, console,
                    [=](const QKeyEvent *key) -> void {
                      if (key->matches(QKeySequence::Copy)) {
                        console->copyClipboard();
                      } else if (key->matches(QKeySequence::Paste)) {
                        console->pasteClipboard();
                      }
-                   });*/
+                   });
             console->setTerminalBackgroundImage("/home/austin/adrenaline.jpg");
             console->setTerminalBackgroundMode(1);	    
             add_sub_window(console, "Terminal");
