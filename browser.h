@@ -45,9 +45,11 @@ private slots:
     void update_url(const QUrl& url);
     void update_url_bar(const QString& url);
     void update_tab_label();
+    void add_tab();
 
 public slots:
-    WebEnginePage* add_tab(const QUrl& qurl = QUrl("https://google.com"));
+    //WebEnginePage* add_tab();
+    WebEnginePage* add_tab(const QUrl& qurl);
 
 private:
     QTabWidget* tabs;
@@ -71,8 +73,6 @@ private:
     QShortcut* shortcut_find_prev;
     QShortcut* shortcut_find_exit;
 
-    void add_tab_signal(const QUrl& qurl);
-    void update_tab_label_signal();
 };
 
 #endif // BROWSER_H

@@ -1,4 +1,4 @@
 AdrenlinerushUI
 Makefile
-.qmake.stash
-.o
+*.qmake.stash
+*.o

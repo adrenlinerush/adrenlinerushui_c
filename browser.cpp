@@ -10,7 +10,7 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
     try {
         tabs = new QTabWidget(this);
         tabs->setDocumentMode(true);
-        //connect(tabs, &QTabWidget::tabBarDoubleClicked, this, &Browser::add_tab_signal);
+        connect(tabs, &QTabWidget::tabBarDoubleClicked, this, static_cast<void (Browser::*)()>(&Browser::add_tab));
         //connect(tabs, &QTabWidget::currentChanged, this, &Browser::update_url_bar);
         tabs->setTabsClosable(true);
         connect(tabs, &QTabWidget::tabCloseRequested, this, &Browser::close_tab);
@@ -35,7 +35,7 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
         //fwdbtn->clicked.connect([this]() { tabs->currentWidget()->forward(); });
         //reloadbtn->clicked.connect([this]() { tabs->currentWidget()->reload(); });
         //connect(shortcut_reload, &QShortcut::activated, [this]() { tabs->currentWidget()->reload(); });
-        //connect(shortcut_new_tab, &QShortcut::activated, this, &Browser::add_tab_signal);
+        connect(shortcut_new_tab, &QShortcut::activated, this, static_cast<void (Browser::*)()>(&Browser::add_tab));
         //stopbtn->clicked.connect([this]() { tabs->currentWidget()->stop(); });
         //homebtn->clicked.connect(this, &Browser::go_home);
         urlbar = new QLineEdit(this);
@@ -61,7 +61,7 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
         navbar->addWidget(favbtn);
         load_favorites();
         setLayout(layout);
-        add_tab(QUrl("https://google.com"));
+        add_tab();
         search_text = "";
         shortcut_find_next = new QShortcut(QKeySequence("N"), this);
         shortcut_find_prev = new QShortcut(QKeySequence("P"), this);
@@ -209,6 +209,12 @@ void Browser::close_tab(int i) {
     } catch (const std::exception& e) {
         qDebug() << "Browser.close_tab: " << e.what();
     }
+}
+
+//WebEnginePage* Browser::add_tab() {
+void Browser::add_tab() {
+  WebEnginePage* page = add_tab(QUrl("https://google.com"));
+  //return page;
 }
 
 WebEnginePage* Browser::add_tab(const QUrl& qurl) {

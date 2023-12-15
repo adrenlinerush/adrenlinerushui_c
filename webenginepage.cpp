@@ -2,6 +2,7 @@
 #include "browser.h"
 #include <QMessageBox>
 #include <QLoggingCategory>
+#include <QUrl>
 
 WebEnginePage::WebEnginePage(QObject* parent) : QWebEnginePage(parent) {}
 
@@ -37,7 +38,7 @@ QWebEnginePage* WebEnginePage::createWindow(QWebEnginePage::WebWindowType type) 
         if (parent() != nullptr) {
             auto webView = dynamic_cast<Browser*>(parent());
             if (webView) {
-                return webView->add_tab();
+                return webView->add_tab(QUrl("https://google.com"));
             }
         }
 
