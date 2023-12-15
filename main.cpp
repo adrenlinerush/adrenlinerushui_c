@@ -24,8 +24,8 @@
 #include <QTimer>
 #include <QWidget>
 //#include <browser.h>
-#include<videoplayer.h>
-
+#include <videoplayer.h>
+#include <calculator.h>
 
 class MDIArea : public QMdiArea {
 public:
@@ -153,7 +153,8 @@ public:
             start->addAction("Quit");
             start->addAction("Terminal");
             start->addAction("Web Browser");
-            start->addAction("Media Player");
+	    start->addAction("Media Player");
+            start->addAction("Calculator");
             // Add other actions...
 	    connect(start, &QMenu::triggered, this, &MainWindow::start);
 
@@ -206,6 +207,8 @@ private:
             //add_tabbed_browser();
         } else if (action->text() == "Media Player") {
 	    addMediaPlayer();
+        } else if (action->text() == "Calculator") {
+	    addCalculator();
         } else if (action->text() == "Quit") {
             qApp->quit();
         }
@@ -315,17 +318,17 @@ private:
             qDebug() << e.what();
         }
     }
-
+*/
     void addCalculator() {
         try {
-            auto widget = new Calculator();
-            addSubWindow(widget, "Calculator");
+            Calculator* widget = new Calculator();
+            add_sub_window(widget, "Calculator");
         } catch (const std::exception& e) {
             qDebug() << "App::addCalculator";
             qDebug() << e.what();
         }
     }
-*/
+
     QShortcut* shortcut_quit;
     QShortcut* shortcut_next_window;
     QShortcut* shortcut_tile_windows;

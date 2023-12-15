@@ -16,10 +16,14 @@ INCLUDEPATH += .
 
 # Input
 SOURCES += \
+    tinyexpr.c \
+    calculator.cpp \
     videoplayer.cpp \
     main.cpp
 
-HEADERS += 
+HEADERS += \
+    tinyexpr.h \
+    calculator.h \
     videoplayer.h
 
 LIBS += -lqtermwidget5 
