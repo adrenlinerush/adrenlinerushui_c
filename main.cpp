@@ -23,7 +23,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QWidget>
-#include <browser.h>
+//#include <browser.h>
 
 
 class MDIArea : public QMdiArea {
@@ -144,7 +144,7 @@ public:
 
             setCentralWidget(mdi);
             add_terminal();
-            add_tabbed_browser();
+            //add_tabbed_browser();
 
             QMenuBar* bar = menuBar();
 
@@ -153,6 +153,7 @@ public:
             start->addAction("Terminal");
             start->addAction("Web Browser");
             // Add other actions...
+	    connect(start, &QMenu::triggered, this, &MainWindow::start);
 
             QMenu* view = bar->addMenu("View");
             view->addAction("Tile");
@@ -200,7 +201,7 @@ private:
         if (action->text() == "Terminal") {
             add_terminal();
         } else if (action->text() == "Web Browser") {
-            add_tabbed_browser();
+            //add_tabbed_browser();
         } else if (action->text() == "Quit") {
             qApp->quit();
         }
@@ -278,16 +279,19 @@ private:
             qDebug() << e.what();
         }
     }
-
+/*
     void add_tabbed_browser() {
         try {
-            auto widget = new Browser;
-            add_sub_window(widget, "Web Browser");
+            WebBrowser webBrowser;
+            QWebSettings::globalSettings()->setAttribute(QWebSettings::AutoLoadImages,true);
+            QWebSettings::globalSettings()->setAttribute(QWebSettings::JavascriptEnabled, true);
+            QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
+            add_sub_window(webBrowser, "Web Browser");
         } catch (const std::exception& e) {
             qDebug() << "App::tabbed_browser";
             qDebug() << e.what();
         }
-    }
+    }*/
    /*    void addMediaPlayer() {
         try {
             auto widget = new VideoPlayer();
