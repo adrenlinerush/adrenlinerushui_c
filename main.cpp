@@ -23,7 +23,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QWidget>
-//#include <browser.h>
+#include <browser.h>
 #include <videoplayer.h>
 #include <calculator.h>
 
@@ -145,7 +145,7 @@ public:
 
             setCentralWidget(mdi);
             add_terminal();
-            //add_tabbed_browser();
+            add_tabbed_browser();
 
             QMenuBar* bar = menuBar();
 
@@ -204,7 +204,7 @@ private:
         if (action->text() == "Terminal") {
             add_terminal();
         } else if (action->text() == "Web Browser") {
-            //add_tabbed_browser();
+            add_tabbed_browser();
         } else if (action->text() == "Media Player") {
 	    addMediaPlayer();
         } else if (action->text() == "Calculator") {
@@ -285,19 +285,16 @@ private:
             qDebug() << e.what();
         }
     }
-/*
+
     void add_tabbed_browser() {
         try {
-            WebBrowser webBrowser;
-            QWebSettings::globalSettings()->setAttribute(QWebSettings::AutoLoadImages,true);
-            QWebSettings::globalSettings()->setAttribute(QWebSettings::JavascriptEnabled, true);
-            QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
+            Browser* webBrowser = new Browser();
             add_sub_window(webBrowser, "Web Browser");
         } catch (const std::exception& e) {
             qDebug() << "App::tabbed_browser";
             qDebug() << e.what();
         }
-    }*/
+    }
        void addMediaPlayer() {
         try {
             VideoPlayer* widget = new VideoPlayer();

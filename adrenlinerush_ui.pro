@@ -16,12 +16,16 @@ INCLUDEPATH += .
 
 # Input
 SOURCES += \
+    webenginepage.cpp\
+    browser.cpp \
     tinyexpr.c \
     calculator.cpp \
     videoplayer.cpp \
     main.cpp
 
 HEADERS += \
+    webenginepage.h \
+    browser.h \
     tinyexpr.h \
     calculator.h \
     videoplayer.h

@@ -1,0 +1,50 @@
+#include "webenginepage.h"
+#include "browser.h"
+#include <QMessageBox>
+#include <QLoggingCategory>
+
+WebEnginePage::WebEnginePage(QObject* parent) : QWebEnginePage(parent) {}
+
+bool WebEnginePage::certificateError(const QWebEngineCertificateError& error) {
+    QWebEngineCertificateError& error_ref = const_cast <QWebEngineCertificateError&>(error);
+    try {
+        qInfo() << error_ref.url();
+        
+        QMessageBox ignoreCertificate;
+        ignoreCertificate.setText("Invalid Certificate");
+        ignoreCertificate.setInformativeText(error_ref.url().toString() + " has presented an invalid certificate. Continue to site anyway?");
+        ignoreCertificate.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        ignoreCertificate.setDefaultButton(QMessageBox::No);
+        int cont = ignoreCertificate.exec();
+
+        if (cont == QMessageBox::Yes) {
+            qInfo() << "Attempting to ignore certificate error.";
+            error_ref.ignoreCertificateError();
+            return true;
+        }
+
+        return QWebEnginePage::certificateError(error);
+    } catch (const std::exception& e) {
+        qCritical() << "WebEnginePage.certificateError: " << e.what();
+        return false;
+    }
+}
+
+QWebEnginePage* WebEnginePage::createWindow(QWebEnginePage::WebWindowType type) {
+    try {
+        qInfo() << "Create Window Type: " << type;
+
+        if (parent() != nullptr) {
+            auto webView = dynamic_cast<Browser*>(parent());
+            if (webView) {
+                return webView->add_tab();
+            }
+        }
+
+        return nullptr;
+    } catch (const std::exception& e) {
+        qCritical() << "WebEnginePage.createWindow: " << e.what();
+        return nullptr;
+    }
+}
+
