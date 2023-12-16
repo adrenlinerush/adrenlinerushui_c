@@ -22,22 +22,36 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
         fwdbtn->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
         reloadbtn = new QPushButton(this);
         reloadbtn->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-        //shortcut_reload = new QShortcut(QKeySequence("F5"), this);
+        shortcut_reload = new QShortcut(QKeySequence("F5"), this);
         shortcut_new_tab = new QShortcut(QKeySequence("Ctrl+T"), this);
-        //shortcut_find_text = new QShortcut(QKeySequence("Ctrl+F"), this);
-        //connect(shortcut_find_text, &QShortcut::activated, this, &Browser::find_text);
+        shortcut_find_text = new QShortcut(QKeySequence("Ctrl+F"), this);
+        connect(shortcut_find_text, &QShortcut::activated, this, &Browser::find_text);
         homebtn = new QPushButton(this);
         homebtn->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
         stopbtn = new QPushButton(this);
         stopbtn->setIcon(style()->standardIcon(QStyle::SP_BrowserStop));
-	//connect(backbtn, &QPushButton::clicked, this, [this]() { tabs->currentWidget()->back(); });
-        //backbtn->clicked.connect([this]() { tabs->currentWidget()->back(); });
-        //fwdbtn->clicked.connect([this]() { tabs->currentWidget()->forward(); });
-        //reloadbtn->clicked.connect([this]() { tabs->currentWidget()->reload(); });
-        //connect(shortcut_reload, &QShortcut::activated, [this]() { tabs->currentWidget()->reload(); });
+        connect(backbtn, &QPushButton::clicked, this, [this]() {
+	    QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
+            cw->back();
+        });
+        connect(fwdbtn, &QPushButton::clicked, this, [this]() {
+	    QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
+	    cw->forward();
+        });
+       connect(reloadbtn, &QPushButton::clicked, this, [this]() {
+	    QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
+	    cw->reload();
+        });
+        connect(shortcut_reload, &QShortcut::activated, this, [this]() {
+	    QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
+	    cw->reload();
+        });
         connect(shortcut_new_tab, &QShortcut::activated, this, static_cast<void (Browser::*)()>(&Browser::add_tab));
-        //stopbtn->clicked.connect([this]() { tabs->currentWidget()->stop(); });
-        //homebtn->clicked.connect(this, &Browser::go_home);
+        connect(stopbtn, &QPushButton::clicked, this, [this]() {
+	    QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
+	    cw->stop();
+        });
+        connect(homebtn, &QPushButton::clicked, this, &Browser::go_home);
         urlbar = new QLineEdit(this);
         shortcut_url = new QShortcut(QKeySequence("Ctrl+G"), this);
         connect(shortcut_url, &QShortcut::activated, this, &Browser::focus_urlbar);
@@ -66,12 +80,21 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
         shortcut_find_next = new QShortcut(QKeySequence("N"), this);
         shortcut_find_prev = new QShortcut(QKeySequence("P"), this);
         shortcut_find_exit = new QShortcut(QKeySequence("ESC"), this);
-        //connect(shortcut_find_next, &QShortcut::activated, this, &Browser::find_next);
-        //connect(shortcut_find_prev, &QShortcut::activated, this, &Browser::find_prev);
-        //connect(shortcut_find_exit, &QShortcut::activated, this, &Browser::find_exit);
+        connect(shortcut_find_next, &QShortcut::activated, this, &Browser::find_next);
+        connect(shortcut_find_prev, &QShortcut::activated, this, &Browser::find_prev);
+        connect(shortcut_find_exit, &QShortcut::activated, this, &Browser::find_exit);
     } catch (const std::exception& e) {
         qDebug() << "Browser.__init__: " << e.what();
     }
+}
+
+void Browser::refresh() {
+    try {
+	QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
+        cw->reload();
+    } catch (const std::exception& e) {
+        qDebug() << "Browser.__init__: " << e.what();
+    } 
 }
 
 void Browser::add_favorite() {
@@ -159,7 +182,7 @@ void Browser::find_text() {
             qDebug() << text;
             search_text = text;
 	    QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
-            //cw->page()->findText(search_text, QWebEnginePage::FindFlags(0), this, &Browser::find_text_callback);
+	    cw->page()->findText(search_text, QWebEnginePage::FindFlags(0), [this](bool found) { find_text_callback(found); });
         }
     } catch (const std::exception& e) {
         qDebug() << "Browser.find_text: " << e.what();
@@ -176,7 +199,7 @@ void Browser::find_text_callback(bool b_found) {
 void Browser::find_next() {
     try {
 	QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
-        //cw->page()->findText(search_text, QWebEnginePage::FindFlags(0), this, &Browser::find_text_callback);
+	cw->page()->findText(search_text, QWebEnginePage::FindFlags(0), [this](bool found) { find_text_callback(found); });
     } catch (const std::exception& e) {
         qDebug() << "Browser.find_next: " << e.what();
     }
@@ -185,7 +208,7 @@ void Browser::find_next() {
 void Browser::find_prev() {
     try {
 	QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
-        //cw->page()->findText(search_text, QWebEnginePage::FindFlags(QWebEnginePage::FindBackward), this, &Browser::find_text_callback);
+	cw->page()->findText(search_text, QWebEnginePage::FindFlags(QWebEnginePage::FindBackward), [this](bool found) { find_text_callback(found); });
     } catch (const std::exception& e) {
         qDebug() << "Browser.find_prev: " << e.what();
     }
@@ -195,7 +218,7 @@ void Browser::find_exit() {
     try {
         search_text = "";
 	QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
-        //cw->page()->findText(search_text, QWebEnginePage::FindFlags(0), this, &Browser::find_text_callback);
+	cw->page()->findText(search_text, QWebEnginePage::FindFlags(0), [this](bool found) { find_text_callback(found); });
     } catch (const std::exception& e) {
         qDebug() << "Browser.find_exit: " << e.what();
     }
@@ -211,17 +234,15 @@ void Browser::close_tab(int i) {
     }
 }
 
-//WebEnginePage* Browser::add_tab() {
 void Browser::add_tab() {
   WebEnginePage* page = add_tab(QUrl("https://google.com"));
-  //return page;
 }
 
 WebEnginePage* Browser::add_tab(const QUrl& qurl) {
     try {
         QWebEngineView* browser = new QWebEngineView(this);
         WebEnginePage* page = new WebEnginePage(this);
-        //connect(page, &WebEnginePage::featurePermissionRequested, this, &Browser::save);
+	connect(page->profile(), &QWebEngineProfile::downloadRequested, this, &Browser::save);
         connect(page, &WebEnginePage::authenticationRequired, this, &Browser::handle_auth);
         browser->setPage(page);
         browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
@@ -259,10 +280,9 @@ void Browser::save(QWebEngineDownloadItem *request) {
         qDebug() << request->path();
         
         if (request->state() == QWebEngineDownloadItem::DownloadRequested) {
-            QUrl url = request->path();
-            QString suffix = QFileInfo(url.toLocalFile()).suffix();
-            //QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
-            QString path = QFileDialog::getSaveFileName(this->tabs->currentWidget(), "Save File", url.toLocalFile(), "*." + suffix);
+            QString fileName = request->downloadFileName();
+            QString suffix = QFileInfo(fileName).completeSuffix();
+            QString path = QFileDialog::getSaveFileName(this->tabs->currentWidget(), "Save File", fileName, "*." + suffix);
             
             if (!path.isEmpty()) {
                 request->setPath(path);
