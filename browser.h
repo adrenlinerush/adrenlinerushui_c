@@ -46,7 +46,6 @@ private slots:
     void update_url_bar(const QString& url);
     void update_tab_label();
     void add_tab();
-    void refresh();
 
 public slots:
     //WebEnginePage* add_tab();

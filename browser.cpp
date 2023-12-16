@@ -88,15 +88,6 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
     }
 }
 
-void Browser::refresh() {
-    try {
-	QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
-        cw->reload();
-    } catch (const std::exception& e) {
-        qDebug() << "Browser.__init__: " << e.what();
-    } 
-}
-
 void Browser::add_favorite() {
     try {
         int tab_index = tabs->currentIndex();

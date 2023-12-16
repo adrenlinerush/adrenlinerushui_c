@@ -2,3 +2,4 @@ AdrenlinerushUI
 Makefile
 *.qmake.stash
 *.o
+*.swp

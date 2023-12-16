@@ -26,6 +26,7 @@
 #include <browser.h>
 #include <videoplayer.h>
 #include <calculator.h>
+#include <filebrowser.h>
 
 class MDIArea : public QMdiArea {
 public:
@@ -55,62 +56,8 @@ private:
     bool centered_;
 };
 
-/*
-class Terminal : public QTermWidget {
-    Q_OBJECT
-
-public:
-    Terminal(QWidget* parent = nullptr) : QTermWidget(parent) {
-        try {
-            connect(this, &QTermWidget::finished, this, &Terminal::close);
-
-            setTerminalBackgroundImage("adrenaline.jpg");
-            setTerminalBackgroundMode(2);
-            setColorScheme("Linux");
-
-            QFont termFont("Terminus", 6, QFont::Bold);
-            setTerminalFont(termFont);
-
-            copyShortcut = new QShortcut(QKeySequence("Ctrl+Ins"), this);
-            connect(copyShortcut, &QShortcut::activated, this, &Terminal::copyClipboard);
-
-            pasteShortcut = new QShortcut(QKeySequence("Shift+Ins"), this);
-            connect(pasteShortcut, &QShortcut::activated, this, &Terminal::pasteClipboard);
-        } catch (const std::exception& e) {
-            qDebug() << "Terminal::Constructor";
-            qDebug() << e.what();
-        }
-    }
-
-public slots:
-    void runProgram(const QString& program, const QStringList& args) {
-        try {
-            qDebug() << program;
-            sendText(program + " " + args.first() + "\n");
-        } catch (const std::exception& e) {
-            qDebug() << "Terminal::runProgram";
-            qDebug() << e.what();
-        }
-    }
-    void copyClipboard() {
-        // Implement copy to clipboard logic
-        qDebug() << "Copy to Clipboard";
-    }
-
-    void pasteClipboard() {
-        // Implement paste from clipboard logic
-        qDebug() << "Paste from Clipboard";
-    }
-
-private:
-    QShortcut* copyShortcut;
-    QShortcut* pasteShortcut;
-};
-*/
 /*class FileBrowser {};
-class VideoPlayer {};
 class VncClient {};
-class Calculator {};
 */
 class MainWindow : public QMainWindow {
 
@@ -155,6 +102,7 @@ public:
             start->addAction("Web Browser");
 	    start->addAction("Media Player");
             start->addAction("Calculator");
+            start->addAction("File Browser");
             // Add other actions...
 	    connect(start, &QMenu::triggered, this, &MainWindow::start);
 
@@ -209,6 +157,8 @@ private:
 	    addMediaPlayer();
         } else if (action->text() == "Calculator") {
 	    addCalculator();
+        } else if (action->text() == "File Browser") {
+            addFileBrowser();
         } else if (action->text() == "Quit") {
             qApp->quit();
         }
@@ -321,6 +271,16 @@ private:
             add_sub_window(widget, "Calculator");
         } catch (const std::exception& e) {
             qDebug() << "App::addCalculator";
+            qDebug() << e.what();
+        }
+    }
+
+    void addFileBrowser() {
+        try {
+            FileBrowser* widget = new FileBrowser();
+            add_sub_window(widget, "File Browser");
+        } catch (const std::exception& e) {
+            qDebug() << "App::addFileBrowser";
             qDebug() << e.what();
         }
     }

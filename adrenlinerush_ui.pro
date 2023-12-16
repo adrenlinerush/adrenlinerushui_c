@@ -16,18 +16,22 @@ INCLUDEPATH += .
 
 # Input
 SOURCES += \
+    documentbrowser.cpp \
     webenginepage.cpp\
     browser.cpp \
     tinyexpr.c \
     calculator.cpp \
     videoplayer.cpp \
+    filebrowser.cpp \
     main.cpp
 
 HEADERS += \
+    documentbrowser.h \
     webenginepage.h \
     browser.h \
     tinyexpr.h \
     calculator.h \
-    videoplayer.h
+    videoplayer.h \
+    filebrowser.h
 
 LIBS += -lqtermwidget5 
