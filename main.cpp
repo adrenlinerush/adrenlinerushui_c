@@ -304,6 +304,10 @@ int main(int argc, char** argv) {
     QApplication app(argc, argv);
     MainWindow mainWindow;
     mainWindow.show();
+    QFont font = QApplication::font();
+    font.setFamily("Terminus");
+    font.setPointSize(6);
+    app.setFont(font);
     return app.exec();
 }
 
