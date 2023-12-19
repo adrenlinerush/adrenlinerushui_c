@@ -27,6 +27,7 @@
 #include <videoplayer.h>
 #include <calculator.h>
 #include <filebrowser.h>
+#include <statusbar.h>
 
 class MDIArea : public QMdiArea {
 public:
@@ -114,7 +115,7 @@ public:
             windows = bar->addMenu("Window");
             connect(windows, &QMenu::triggered, this, &MainWindow::window_activate);
 
-            //start_status_bar();
+            start_status_bar();
 
             mdi->tileSubWindows();
             show();
@@ -125,20 +126,20 @@ public:
     }
 
 private:
-    /*void start_status_bar() {
+    void start_status_bar() {
         try {
             qDebug() << "App::start_status_bar";
             status_thread = new QThread;
-            status_worker = new statusBar(statusBar());
+            status_worker = new StatusBar(statusBar());
             status_worker->moveToThread(status_thread);
-            connect(status_thread, &QThread::started, status_worker, &statusBar::update_status_bar);
+            connect(status_thread, &QThread::started, status_worker, &StatusBar::updateStatusBar);
             qDebug() << "About to start status thread";
             status_thread->start();
         } catch (const std::exception& e) {
             qDebug() << "App::start_status_bar";
             qDebug() << e.what();
         }
-    }*/
+    }
 
     void view(QAction* action) {
         if (action->text() == "Tile") {
@@ -293,8 +294,8 @@ private:
 
     QPixmap bg_img;
     MDIArea* mdi;
-    //QThread* status_thread;
-    //statusBar* status_worker;
+    QThread* status_thread;
+    StatusBar* status_worker;
 
     QMenu* windows;
 };

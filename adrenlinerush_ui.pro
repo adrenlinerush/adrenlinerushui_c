@@ -23,6 +23,7 @@ SOURCES += \
     calculator.cpp \
     videoplayer.cpp \
     filebrowser.cpp \
+    statusbar.cpp \
     main.cpp
 
 HEADERS += \
@@ -32,6 +33,7 @@ HEADERS += \
     tinyexpr.h \
     calculator.h \
     videoplayer.h \
-    filebrowser.h
+    filebrowser.h \
+    statusbar.h
 
 LIBS += -lqtermwidget5 
