@@ -28,8 +28,8 @@
 #include <calculator.h>
 #include <filebrowser.h>
 #include <statusbar.h>
-#include <vncclient.h>
-#include <mdisubwindow.h>
+//#include <vncclient.h>
+//#include <mdisubwindow.h>
 
 class MDIArea : public QMdiArea {
 public:
@@ -106,7 +106,7 @@ public:
 	    start->addAction("Media Player");
             start->addAction("Calculator");
             start->addAction("File Browser");
-            start->addAction("Vnc Client");
+            //start->addAction("Vnc Client");
             // Add other actions...
 	    connect(start, &QMenu::triggered, this, &MainWindow::start);
 
@@ -163,8 +163,8 @@ private:
 	    addCalculator();
         } else if (action->text() == "File Browser") {
             addFileBrowser();
-        } else if (action->text() == "Vnc Client") {
-	    addVncClient();
+        //} else if (action->text() == "Vnc Client") {
+	//    addVncClient();
         } else if (action->text() == "Quit") {
             qApp->quit();
         }
@@ -199,7 +199,7 @@ private:
 
     void add_sub_window(QWidget* widget, const QString& title) {
         try {
-            auto sub = new MdiSubWindow;
+            auto sub = new QMdiSubWindow;
             sub->setWindowIcon(QIcon("adrenaline.png"));
             sub->setWidget(widget);
             sub->setWindowTitle(title);
@@ -256,7 +256,7 @@ private:
         }
     }
 
-    void addVncClient() {
+    /*void addVncClient() {
         try {
             auto widget = new VncClient();
             add_sub_window(widget, "VNC");
@@ -264,7 +264,7 @@ private:
             qDebug() << "App::addVncClient";
             qDebug() << e.what();
         }
-    }
+    }*/
 
     void addCalculator() {
         try {
