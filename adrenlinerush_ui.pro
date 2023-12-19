@@ -24,6 +24,8 @@ SOURCES += \
     videoplayer.cpp \
     filebrowser.cpp \
     statusbar.cpp \
+    qvncclientwidget.cpp \
+    vncclient.cpp \
     main.cpp
 
 HEADERS += \
@@ -34,6 +36,8 @@ HEADERS += \
     calculator.h \
     videoplayer.h \
     filebrowser.h \
+    qvncclientwidget.h \
+    vncclient.h \
     statusbar.h
 
 LIBS += -lqtermwidget5 

@@ -28,6 +28,7 @@
 #include <calculator.h>
 #include <filebrowser.h>
 #include <statusbar.h>
+#include <vncclient.h>
 
 class MDIArea : public QMdiArea {
 public:
@@ -104,6 +105,7 @@ public:
 	    start->addAction("Media Player");
             start->addAction("Calculator");
             start->addAction("File Browser");
+            start->addAction("Vnc Client");
             // Add other actions...
 	    connect(start, &QMenu::triggered, this, &MainWindow::start);
 
@@ -160,6 +162,8 @@ private:
 	    addCalculator();
         } else if (action->text() == "File Browser") {
             addFileBrowser();
+        } else if (action->text() == "Vnc Client") {
+	    addVncClient();
         } else if (action->text() == "Quit") {
             qApp->quit();
         }
@@ -255,17 +259,17 @@ private:
             qDebug() << e.what();
         }
     }
-/*
+
     void addVncClient() {
         try {
             auto widget = new VncClient();
-            addSubWindow(widget, "VNC");
+            add_sub_window(widget, "VNC");
         } catch (const std::exception& e) {
             qDebug() << "App::addVncClient";
             qDebug() << e.what();
         }
     }
-*/
+
     void addCalculator() {
         try {
             Calculator* widget = new Calculator();
