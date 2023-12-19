@@ -29,6 +29,7 @@
 #include <filebrowser.h>
 #include <statusbar.h>
 #include <vncclient.h>
+#include <mdisubwindow.h>
 
 class MDIArea : public QMdiArea {
 public:
@@ -186,11 +187,6 @@ private:
             if (window == active_window) {
                 qDebug() << "Active Window: " << window->windowTitle();
                 activate_action = new QAction("* " + window->windowTitle(), this);
-                // Hack because mdiSubWindow retains focus, prevents keystroke events from getting to VNC
-                // Solution: create a new subwindow class and implement keystroke event to emit to widget
-                if (window->windowTitle() == "VNC") {
-                    window->widget()->setFocus();
-                }
             } else {
                 qDebug() << "Inactive Window: " << window->windowTitle();
                 activate_action = new QAction(window->windowTitle(), this);
@@ -203,7 +199,7 @@ private:
 
     void add_sub_window(QWidget* widget, const QString& title) {
         try {
-            auto sub = new QMdiSubWindow;
+            auto sub = new MdiSubWindow;
             sub->setWindowIcon(QIcon("adrenaline.png"));
             sub->setWidget(widget);
             sub->setWindowTitle(title);

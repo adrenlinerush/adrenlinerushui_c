@@ -26,6 +26,7 @@ SOURCES += \
     statusbar.cpp \
     qvncclientwidget.cpp \
     vncclient.cpp \
+    mdisubwindow.cpp \
     main.cpp
 
 HEADERS += \
@@ -38,6 +39,7 @@ HEADERS += \
     filebrowser.h \
     qvncclientwidget.h \
     vncclient.h \
+    mdisubwindow.h \
     statusbar.h
 
 LIBS += -lqtermwidget5 
