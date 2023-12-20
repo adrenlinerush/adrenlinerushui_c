@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QDebug>
 #include <QSplitter>
+#include <QMessageBox>
 
 class FileBrowser : public QWidget {
     Q_OBJECT

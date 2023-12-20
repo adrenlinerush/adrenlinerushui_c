@@ -218,7 +218,8 @@ void Browser::find_exit() {
 void Browser::close_tab(int i) {
     try {
         if (tabs->count() > 1) {
-            tabs->removeTab(i);
+	    delete tabs->widget(i);
+            //tabs->removeTab(i);
         }
     } catch (const std::exception& e) {
         qDebug() << "Browser.close_tab: " << e.what();

@@ -77,8 +77,9 @@ bool FileBrowser::isBinaryFile(const std::string& filename) {
 
 void FileBrowser::closeTab(int index) {
     try {
-        view->widget(index)->close();
-        view->removeTab(index);
+        //view->widget(index)->close();
+        //view->removeTab(index);
+	delete view->widget(index);
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::closeTab";
         qDebug() << e.what();
@@ -145,6 +146,16 @@ void FileBrowser::itemActivated() {
 		           openMediaPlayer(path);
 		       } else if (browser != browserList.end()) {
                            openBrowser(path);
+		       } else {
+                           QMessageBox::StandardButton reply = QMessageBox::question(
+				this,
+				"Unknown File Type.",
+				"Would you like to open with vim?",
+				QMessageBox::Yes | QMessageBox::No
+			    );
+                           if (reply == QMessageBox::Yes) {
+			        openTextFile(path);
+                           }
 		       }
 		    } else {
                        openTextFile(path);
