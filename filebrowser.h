@@ -10,6 +10,7 @@
 #include <QTabWidget>
 #include <QLineEdit>
 #include <QDebug>
+#include <QSplitter>
 
 class FileBrowser : public QWidget {
     Q_OBJECT
@@ -31,6 +32,7 @@ private:
     QTabWidget* view;
     QLineEdit* dir_display;
     QString dir;
+    QSplitter *splitter;
 
     void openMediaPlayer(const QString& filepath);
     void openTextFile(const QString& filepath);

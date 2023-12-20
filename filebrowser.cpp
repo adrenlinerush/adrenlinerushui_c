@@ -18,7 +18,9 @@ FileBrowser::FileBrowser(QWidget* parent)
     : QWidget(parent), dir(QDir::homePath()) {
     try {
         layout = new QHBoxLayout(this);
+	splitter = new QSplitter(Qt::Horizontal);
         file_group = new QGroupBox();
+	file_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         file_group_layout = new QVBoxLayout(file_group);
         file_group->setLayout(file_group_layout);
 
@@ -34,8 +36,9 @@ FileBrowser::FileBrowser(QWidget* parent)
 
         file_group_layout->addWidget(dir_display);
         file_group_layout->addWidget(files);
-        layout->addWidget(file_group);
-        layout->addWidget(view);
+        splitter->addWidget(file_group);
+        splitter->addWidget(view);
+	layout->addWidget(splitter);
 
         qDebug() << dir;
         updateDirListing();
