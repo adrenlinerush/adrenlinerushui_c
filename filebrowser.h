@@ -24,6 +24,7 @@ private slots:
     void updateDirListing();
     void itemActivated();
     bool isBinaryFile(const std::string& filename);
+    void renameTab(int i);
 
 private:
     QHBoxLayout* layout;

@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <qtermwidget5/qtermwidget.h>
 #include <QApplication>
+#include <QInputDialog>
 
 FileBrowser::FileBrowser(QWidget* parent)
     : QWidget(parent), dir(QDir::homePath()) {
@@ -30,6 +31,7 @@ FileBrowser::FileBrowser(QWidget* parent)
         view = new QTabWidget();
         view->setTabsClosable(true);
         connect(view, &QTabWidget::tabCloseRequested, this, &FileBrowser::closeTab);
+        connect(view, &QTabWidget::tabBarDoubleClicked, this, &FileBrowser::renameTab);
 
         dir_display = new QLineEdit();
         dir_display->setReadOnly(true);
@@ -49,6 +51,13 @@ FileBrowser::FileBrowser(QWidget* parent)
         qDebug() << "FileBrowser::__init__";
         qDebug() << e.what();
     }
+}
+
+void FileBrowser::renameTab(int i) {
+    QString newLabel = QInputDialog::getText(this, "", "What would you like to label this tab as:");
+    if (newLabel.isEmpty())
+        return;
+    view->setTabText(i, newLabel);
 }
 
 bool FileBrowser::isBinaryFile(const std::string& filename) {
@@ -123,9 +132,9 @@ void FileBrowser::itemActivated() {
             } else {
                 if (QFileInfo(path).isFile()) {
 		    if (isBinaryFile(path.toStdString())) {
-		       QString suffix = QFileInfo(itemText).completeSuffix();
+		       QString suffix = QFileInfo(itemText).suffix();
 
-		       QVector<QString> mediaList;
+		       QList<QString> mediaList;
 		       mediaList.append("mp4");
 		       mediaList.append("mp3");
 		       mediaList.append("wav");
@@ -133,30 +142,32 @@ void FileBrowser::itemActivated() {
 		       mediaList.append("mkv");
 
 
-		       QVector<QString> browserList;
+		       QList<QString> browserList;
 		       browserList.append("pdf");
 		       browserList.append("jpg");
 		       browserList.append("gif");
 		       browserList.append("bmp");
 		       browserList.append("png");
 
-		       auto media = std::find(mediaList.begin(), mediaList.end(), suffix);
-		       auto browser = std::find(browserList.begin(), browserList.end(), suffix);
-		       if (media != mediaList.end()) {
-		           openMediaPlayer(path);
-		       } else if (browser != browserList.end()) {
-                           openBrowser(path);
-		       } else {
+                       if (mediaList.contains(suffix)) { 
+		               openMediaPlayer(path);
+			       return;
+     		       }
+		       if (browserList.contains(suffix)) {
+                               openBrowser(path);
+			       return;
+		       }
+
                            QMessageBox::StandardButton reply = QMessageBox::question(
 				this,
-				"Unknown File Type.",
-				"Would you like to open with vim?",
+				"", 
+				"Unknown File Type.\nWould you like to open with vim?",
 				QMessageBox::Yes | QMessageBox::No
 			    );
                            if (reply == QMessageBox::Yes) {
 			        openTextFile(path);
                            }
-		       }
+			   return;
 		    } else {
                        openTextFile(path);
 		    }
