@@ -186,7 +186,8 @@ void FileBrowser::openMediaPlayer(const QString& filepath) {
         // You can replace the following line with the actual implementation
         qDebug() << "Open Media Player: " << filepath;
         VideoPlayer *mediaplayer = new VideoPlayer(filepath, false);
-        view->addTab(mediaplayer, filepath);
+	QString filename = QFileInfo(filepath).fileName();
+        view->addTab(mediaplayer, filename);
         view->setCurrentIndex(view->count() - 1);
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openMediaPlayer";
@@ -214,7 +215,8 @@ void FileBrowser::openTextFile(const QString& filepath) {
                  }
                });
         console->sendText("vim  " + filepath  + "\n");
-        view->addTab(console, filepath);
+	QString filename = QFileInfo(filepath).fileName();
+        view->addTab(console, filename);
         view->setCurrentIndex(view->count() - 1);
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openTextFile";
@@ -227,8 +229,9 @@ void FileBrowser::openBrowser(const QString& filepath) {
         // Implement the logic to open browser
         // You can replace the following line with the actual implementation
         qDebug() << "Open Browser: " << filepath;
+	QString filename = QFileInfo(filepath).fileName();
         DocumentBrowser *mediabrowser = new DocumentBrowser("file://" + filepath);
-        view->addTab(mediabrowser, filepath);
+        view->addTab(mediabrowser, filename);
         view->setCurrentIndex(view->count() - 1);
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openBrowser";
