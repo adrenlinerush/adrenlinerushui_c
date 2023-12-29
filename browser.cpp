@@ -233,7 +233,7 @@ void Browser::add_tab() {
 WebEnginePage* Browser::add_tab(const QUrl& qurl) {
     try {
         QWebEngineView* browser = new QWebEngineView(tabs);
-        WebEnginePage* page = new WebEnginePage(browser);
+        WebEnginePage* page = new WebEnginePage(this);
 	connect(page->profile(), &QWebEngineProfile::downloadRequested, this, &Browser::save);
         connect(page, &WebEnginePage::authenticationRequired, this, &Browser::handle_auth);
         browser->setPage(page);
