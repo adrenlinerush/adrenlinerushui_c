@@ -1,4 +1,10 @@
-# Multiscreen Display (Gentoo)
+# Install
+
+1. emerge deps
+2. qmake adrenlinerushui.pro
+3. make
+
+# Multiscreen (on same card) Support
 
 1. create the following directories within /etc/portage/patches/dev-qt/:
 
