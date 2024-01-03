@@ -28,6 +28,7 @@
 #include <calculator.h>
 #include <filebrowser.h>
 #include <statusbar.h>
+#include <QDesktopWidget>
 //#include <vncclient.h>
 //#include <mdisubwindow.h>
 
@@ -121,7 +122,8 @@ public:
             start_status_bar();
 
             mdi->tileSubWindows();
-            show();
+            //show();
+	    //this->repaint();
         } catch (const std::exception& e) {
             qDebug() << "MainWindow::__init__";
             qDebug() << e.what();
@@ -300,7 +302,7 @@ private:
     QMenu* windows;
 };
 
-int main(int argc, char** argv) {
+/*int main(int argc, char** argv) {
     setenv("TERM", "konsole-256color", 1); // 1 means overwrite if already exists
     QApplication app(argc, argv);
     MainWindow mainWindow;
@@ -310,5 +312,41 @@ int main(int argc, char** argv) {
     font.setPointSize(6);
     app.setFont(font);
     return app.exec();
+}*/
+
+int main(int argc, char *argv[])
+{
+    setenv("TERM", "konsole-256color", 1); // 1 means overwrite if already exists
+    QApplication a(argc, argv);
+    MainWindow w1;
+    MainWindow w2;
+
+    QFont font = QApplication::font();
+    font.setFamily("Terminus");
+    font.setPointSize(6);
+    a.setFont(font);
+
+    QDesktopWidget *widget = QApplication::desktop();
+    qDebug() << "Number of screens:" << widget->screenCount();
+    for (int i = 0; i < widget->screenCount(); i++) {
+        qDebug() << "Geometry:" << widget->screenGeometry(i);
+    }
+    // Get geometry of Secondary screen
+    QRect rect = widget->screenGeometry(1);
+    //qDebug() << "Move to:" << rect.width() << ":" << rect.y();
+    //qDebug() << "Move to:" << rect.x() << ":" << rect.y();
+    //w1.setStyleSheet("QMainWindow {background: 'yellow';}");
+    w1.show();
+    //Move w2 to Secondary Screen
+    if (widget->screenCount() > 1) {
+        w2.move(rect.width(), rect.y());
+        w2.setFixedSize(rect.width(), rect.height());
+        w2.show();
+    }
+    int r = a.exec();
+    //delete w1;
+    //delete w2;
+    return r;
+
 }
 

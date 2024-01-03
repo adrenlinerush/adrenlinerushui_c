@@ -1,0 +1,220 @@
+diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor.cpp src/platformsupport/platformcompositor/qopenglcompositor.cpp
+--- a/src/platformsupport/platformcompositor/qopenglcompositor.cpp	2023-06-09 10:30:54.000000000 -0400
++++ b/src/platformsupport/platformcompositor/qopenglcompositor.cpp	2024-01-03 08:52:58.741429079 -0500
+@@ -76,9 +76,6 @@
+ static QOpenGLCompositor *compositor = 0;
+ 
+ QOpenGLCompositor::QOpenGLCompositor()
+-    : m_context(0),
+-      m_targetWindow(0),
+-      m_rotation(0)
+ {
+     Q_ASSERT(!compositor);
+     m_updateTimer.setSingleShot(true);
+@@ -93,19 +90,18 @@
+     compositor = 0;
+ }
+ 
+-void QOpenGLCompositor::setTarget(QOpenGLContext *context, QWindow *targetWindow,
+-                                  const QRect &nativeTargetGeometry)
++void QOpenGLCompositor::addTarget(QOpenGLContext *context, QWindow *targetWindow,
++                                  const QRect &nativeTargetGeometry, int degrees)
+ {
+-    m_context = context;
+-    m_targetWindow = targetWindow;
+-    m_nativeTargetGeometry = nativeTargetGeometry;
+-}
++    QOpenGLCompositorTarget *target = new QOpenGLCompositorTarget;
++    target->m_context = context;
++    target->m_targetWindow = targetWindow;
++    target->m_nativeTargetGeometry = nativeTargetGeometry;
++    target->m_rotation = degrees;
++    target->m_rotationMatrix.setToIdentity();
++    target->m_rotationMatrix.rotate(degrees, 0, 0, 1);
+ 
+-void QOpenGLCompositor::setRotation(int degrees)
+-{
+-    m_rotation = degrees;
+-    m_rotationMatrix.setToIdentity();
+-    m_rotationMatrix.rotate(degrees, 0, 0, 1);
++    m_targets.append(target);
+ }
+ 
+ void QOpenGLCompositor::update()
+@@ -116,27 +112,33 @@
+ 
+ QImage QOpenGLCompositor::grab()
+ {
+-    Q_ASSERT(m_context && m_targetWindow);
+-    m_context->makeCurrent(m_targetWindow);
+-    QScopedPointer<QOpenGLFramebufferObject> fbo(new QOpenGLFramebufferObject(m_nativeTargetGeometry.size()));
+-    renderAll(fbo.data());
++    Q_ASSERT(!m_targets.isEmpty());
++    QOpenGLCompositorTarget *target = m_targets.first();
++    Q_ASSERT(target->m_context && target->m_targetWindow);
++    target->m_context->makeCurrent(target->m_targetWindow);
++    QScopedPointer<QOpenGLFramebufferObject> fbo(new QOpenGLFramebufferObject(target->m_nativeTargetGeometry.size()));
++    renderAll(fbo.data(), target);
+     return fbo->toImage();
+ }
+ 
+ void QOpenGLCompositor::handleRenderAllRequest()
+ {
+-    Q_ASSERT(m_context && m_targetWindow);
+-    m_context->makeCurrent(m_targetWindow);
+-    renderAll(0);
++    Q_ASSERT(!m_targets.isEmpty());
++
++    foreach (QOpenGLCompositorTarget *t, m_targets) {
++        Q_ASSERT(t->m_context && t->m_targetWindow);
++        t->m_context->makeCurrent(t->m_targetWindow);
++        renderAll(0, t);
++    }
+ }
+ 
+-void QOpenGLCompositor::renderAll(QOpenGLFramebufferObject *fbo)
++void QOpenGLCompositor::renderAll(QOpenGLFramebufferObject *fbo, QOpenGLCompositorTarget *t)
+ {
+     if (fbo)
+         fbo->bind();
+ 
+     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+-    glViewport(0, 0, m_nativeTargetGeometry.width(), m_nativeTargetGeometry.height());
++    glViewport(0, 0, t->m_nativeTargetGeometry.width(), t->m_nativeTargetGeometry.height());
+ 
+     if (!m_blitter.isCreated())
+         m_blitter.create();
+@@ -147,11 +149,11 @@
+         m_windows.at(i)->beginCompositing();
+ 
+     for (int i = 0; i < m_windows.size(); ++i)
+-        render(m_windows.at(i));
++        render(m_windows.at(i), t);
+ 
+     m_blitter.release();
+     if (!fbo)
+-        m_context->swapBuffers(m_targetWindow);
++        t->m_context->swapBuffers(t->m_targetWindow);
+     else
+         fbo->release();
+ 
+@@ -210,13 +212,13 @@
+     blitter->blit(textures->textureId(idx), target, source);
+ }
+ 
+-void QOpenGLCompositor::render(QOpenGLCompositorWindow *window)
++void QOpenGLCompositor::render(QOpenGLCompositorWindow *window, QOpenGLCompositorTarget *t)
+ {
+     const QPlatformTextureList *textures = window->textures();
+     if (!textures)
+         return;
+ 
+-    const QRect targetWindowRect(QPoint(0, 0), m_targetWindow->geometry().size());
++    const QRect targetWindowRect(t->m_targetWindow->geometry().topLeft(), t->m_targetWindow->geometry().size());
+     float currentOpacity = 1.0f;
+     BlendStateBinder blend;
+     const QRect sourceWindowRect = window->sourceWindow()->geometry();
+@@ -232,28 +234,28 @@
+             // Backingstore for a widget with QOpenGLWidget subwidgets
+             blend.set(true);
+             QMatrix4x4 target = QOpenGLTextureBlitter::targetTransform(textures->geometry(i), targetWindowRect);
+-            if (m_rotation)
+-                target = m_rotationMatrix * target;
++            if (t->m_rotation)
++                target = t->m_rotationMatrix * target;
+             m_blitter.blit(textureId, target, QOpenGLTextureBlitter::OriginTopLeft);
+         } else if (textures->count() == 1) {
+             // A regular QWidget window
+             const bool translucent = window->sourceWindow()->requestedFormat().alphaBufferSize() > 0;
+             blend.set(translucent);
+             QMatrix4x4 target = QOpenGLTextureBlitter::targetTransform(textures->geometry(i), targetWindowRect);
+-            if (m_rotation)
+-                target = m_rotationMatrix * target;
++            if (t->m_rotation)
++                target = t->m_rotationMatrix * target;
+             m_blitter.blit(textureId, target, QOpenGLTextureBlitter::OriginTopLeft);
+         } else if (!textures->flags(i).testFlag(QPlatformTextureList::StacksOnTop)) {
+             // Texture from an FBO belonging to a QOpenGLWidget or QQuickWidget
+             blend.set(false);
+-            clippedBlit(textures, i, sourceWindowRect, targetWindowRect, &m_blitter, m_rotation ? &m_rotationMatrix : nullptr);
++            clippedBlit(textures, i, sourceWindowRect, targetWindowRect, &m_blitter, t->m_rotation ? &t->m_rotationMatrix : nullptr);
+         }
+     }
+ 
+     for (int i = 0; i < textures->count(); ++i) {
+         if (textures->flags(i).testFlag(QPlatformTextureList::StacksOnTop)) {
+             blend.set(true);
+-            clippedBlit(textures, i, sourceWindowRect, targetWindowRect, &m_blitter, m_rotation ? &m_rotationMatrix : nullptr);
++            clippedBlit(textures, i, sourceWindowRect, targetWindowRect, &m_blitter, t->m_rotation ? &t->m_rotationMatrix : nullptr);
+         }
+     }
+ 
+diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor_p.h src/platformsupport/platformcompositor/qopenglcompositor_p.h
+--- a/src/platformsupport/platformcompositor/qopenglcompositor_p.h	2023-06-09 10:30:54.000000000 -0400
++++ b/src/platformsupport/platformcompositor/qopenglcompositor_p.h	2024-01-03 08:58:50.314395756 -0500
+@@ -62,6 +62,18 @@
+ class QWindow;
+ class QPlatformTextureList;
+ 
++class QOpenGLCompositorTarget
++{
++public:
++    QOpenGLCompositorTarget() : m_context(0), m_targetWindow(0), m_rotation(0) { }
++
++    QOpenGLContext *m_context;
++    QWindow *m_targetWindow;
++    QRect m_nativeTargetGeometry;
++    int m_rotation;
++    QMatrix4x4 m_rotationMatrix;
++};
++
+ class QOpenGLCompositorWindow
+ {
+ public:
+@@ -80,10 +92,10 @@
+     static QOpenGLCompositor *instance();
+     static void destroy();
+ 
+-    void setTarget(QOpenGLContext *context, QWindow *window, const QRect &nativeTargetGeometry);
+-    void setRotation(int degrees);
+-    QOpenGLContext *context() const { return m_context; }
+-    QWindow *targetWindow() const { return m_targetWindow; }
++    void addTarget(QOpenGLContext *context, QWindow *window,
++        const QRect &nativeTargetGeometry, int degrees);
++    QOpenGLContext *context() const { return m_targets.isEmpty() ? 0 : m_targets[0]->m_context; }
++    QWindow *targetWindow() const { return m_targets.isEmpty() ? 0 : m_targets[0]->m_targetWindow; }
+ 
+     void update();
+     QImage grab();
+@@ -104,14 +116,10 @@
+     QOpenGLCompositor();
+     ~QOpenGLCompositor();
+ 
+-    void renderAll(QOpenGLFramebufferObject *fbo);
+-    void render(QOpenGLCompositorWindow *window);
++    void renderAll(QOpenGLFramebufferObject *fbo, QOpenGLCompositorTarget *t);
++    void render(QOpenGLCompositorWindow *window, QOpenGLCompositorTarget *t); 
+ 
+-    QOpenGLContext *m_context;
+-    QWindow *m_targetWindow;
+-    QRect m_nativeTargetGeometry;
+-    int m_rotation;
+-    QMatrix4x4 m_rotationMatrix;
++    QList<QOpenGLCompositorTarget *> m_targets;
+     QTimer m_updateTimer;
+     QOpenGLTextureBlitter m_blitter;
+     QList<QOpenGLCompositorWindow *> m_windows;
+diff -ruN src-dist/plugins/platforms/eglfs/api/qeglfswindow.cpp src/plugins/platforms/eglfs/api/qeglfswindow.cpp
+--- a/src/plugins/platforms/eglfs/api/qeglfswindow.cpp	2023-06-09 10:30:54.000000000 -0400
++++ b/src/plugins/platforms/eglfs/api/qeglfswindow.cpp	2024-01-03 09:00:23.889048486 -0500
+@@ -144,8 +144,8 @@
+         m_rasterCompositingContext->setScreen(window()->screen());
+         if (Q_UNLIKELY(!m_rasterCompositingContext->create()))
+             qFatal("EGLFS: Failed to create compositing context");
+-        compositor->setTarget(m_rasterCompositingContext, window(), screen->rawGeometry());
+-        compositor->setRotation(qEnvironmentVariableIntValue("QT_QPA_EGLFS_ROTATION"));
++	compositor->addTarget(m_rasterCompositingContext, window(), screen->rawGeometry(),
++	            qEnvironmentVariableIntValue((QString("QT_QPA_EGLFS_ROTATION_") + screen->name()).toLatin1().constData()));
+         // If there is a "root" window into which raster and QOpenGLWidget content is
+         // composited, all other contexts must share with its context.
+         if (!qt_gl_global_share_context())
