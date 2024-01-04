@@ -131,9 +131,11 @@ public:
     }
 
     void setOtherScreen(MainWindow *otherScreen) {
-        QAction* screenFocus = bar->addAction("Switch Screen Focus");
         oScreen = otherScreen;
+        QAction* screenFocus = bar->addAction("Switch Screen Focus");
 	connect(screenFocus, &QAction::triggered, this, &MainWindow::activateOtherScreen);
+	shortcut_next_screen = new QShortcut(QKeySequence("Ctrl+S"), this);
+        connect(shortcut_next_screen, &QShortcut::activated, this, &MainWindow::activateOtherScreen);
     }
 
 private:
@@ -300,6 +302,7 @@ private:
 
     QShortcut* shortcut_quit;
     QShortcut* shortcut_next_window;
+    QShortcut* shortcut_next_screen;
     QShortcut* shortcut_tile_windows;
     QShortcut* shortcut_restore_window;
     QShortcut* shortcut_maximize_window;
