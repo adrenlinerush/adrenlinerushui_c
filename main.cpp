@@ -98,7 +98,7 @@ public:
             add_terminal();
             add_tabbed_browser();
 
-            QMenuBar* bar = menuBar();
+            bar = menuBar();
 
             QMenu* start = bar->addMenu("Start");
             start->addAction("Quit");
@@ -130,7 +130,17 @@ public:
         }
     }
 
+    void setOtherScreen(MainWindow *otherScreen) {
+        QAction* screenFocus = bar->addAction("Switch Screen Focus");
+        oScreen = otherScreen;
+	connect(screenFocus, &QAction::triggered, this, &MainWindow::activateOtherScreen);
+    }
+
 private:
+    void activateOtherScreen() {
+	    oScreen->activateWindow();
+    }
+
     void start_status_bar() {
         try {
             qDebug() << "App::start_status_bar";
@@ -293,6 +303,8 @@ private:
     QShortcut* shortcut_tile_windows;
     QShortcut* shortcut_restore_window;
     QShortcut* shortcut_maximize_window;
+    QMenuBar* bar;
+    MainWindow* oScreen;
 
     QPixmap bg_img;
     MDIArea* mdi;
@@ -332,20 +344,24 @@ int main(int argc, char *argv[])
         qDebug() << "Geometry:" << widget->screenGeometry(i);
     }
     // Get geometry of Secondary screen
-    QRect rect = widget->screenGeometry(1);
     //qDebug() << "Move to:" << rect.width() << ":" << rect.y();
     //qDebug() << "Move to:" << rect.x() << ":" << rect.y();
     //w1.setStyleSheet("QMainWindow {background: 'yellow';}");
+    QRect rect = widget->screenGeometry(0);
+    w1.setFixedSize(rect.width(), rect.height());
     w1.show();
     //Move w2 to Secondary Screen
     if (widget->screenCount() > 1) {
+        QRect rect = widget->screenGeometry(1);
+	w1.setOtherScreen(&w2);
+	w2.setOtherScreen(&w1);
         w2.move(rect.width(), rect.y());
         w2.setFixedSize(rect.width(), rect.height());
         w2.show();
     }
     int r = a.exec();
-    //delete w1;
-    //delete w2;
+    delete &w1;
+    delete &w2;
     return r;
 
 }
