@@ -102,6 +102,7 @@ void FileBrowser::updateDirListing() {
         dir_display->setText(dir);
 
         QDir directory(dir);
+	directory.setFilter(QDir::Files | QDir::Hidden | QDir::AllDirs | QDir::System);
         for (const auto& entry : directory.entryList()) {
             qDebug() << entry;
             files->addItem(entry);
