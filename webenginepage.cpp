@@ -6,6 +6,10 @@
 
 WebEnginePage::WebEnginePage(QObject* parent) : QWebEnginePage(parent) {}
 
+void WebEnginePage::setBrowser(QObject* tabbedBrowser) {
+	browser = tabbedBrowser;
+}
+
 bool WebEnginePage::certificateError(const QWebEngineCertificateError& error) {
     QWebEngineCertificateError& error_ref = const_cast <QWebEngineCertificateError&>(error);
     try {
@@ -35,8 +39,8 @@ QWebEnginePage* WebEnginePage::createWindow(QWebEnginePage::WebWindowType type) 
     try {
         qInfo() << "Create Window Type: " << type;
 
-        if (parent() != nullptr) {
-            auto webView = dynamic_cast<Browser*>(parent());
+        if (browser != nullptr) {
+            auto webView = dynamic_cast<Browser*>(browser);
             if (webView) {
                 return webView->add_tab(QUrl("https://google.com"));
             }
