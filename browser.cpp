@@ -232,19 +232,19 @@ void Browser::add_tab() {
 
 WebEnginePage* Browser::add_tab(const QUrl& qurl) {
     try {
-        QWebEngineView* browser = new QWebEngineView(tabs);
-        WebEnginePage* page = new WebEnginePage(browser);
+        QWebEngineView* webView = new QWebEngineView(tabs);
+        WebEnginePage* page = new WebEnginePage(webView);
 	page->setBrowser(this);
 	connect(page->profile(), &QWebEngineProfile::downloadRequested, this, &Browser::save);
         connect(page, &WebEnginePage::authenticationRequired, this, &Browser::handle_auth);
-        browser->setPage(page);
-        browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-        browser->settings()->setAttribute(QWebEngineSettings::PdfViewerEnabled, true);
+        webView->setPage(page);
+        webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+        webView->settings()->setAttribute(QWebEngineSettings::PdfViewerEnabled, true);
         qDebug() << "Browser.add_tab: url: " << qurl;
-        browser->setUrl(qurl);
-        connect(browser, &QWebEngineView::urlChanged, this, &Browser::update_url);
-        connect(browser, &QWebEngineView::titleChanged, this, &Browser::update_tab_label);
-        int i = tabs->addTab(browser, browser->title());
+        webView->setUrl(qurl);
+        connect(webView, &QWebEngineView::urlChanged, this, &Browser::update_url);
+        connect(webView, &QWebEngineView::titleChanged, this, &Browser::update_tab_label);
+        int i = tabs->addTab(webView, webView->title());
         tabs->setCurrentIndex(i);
 	return page;
     } catch (const std::exception& e) {

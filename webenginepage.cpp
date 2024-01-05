@@ -40,9 +40,9 @@ QWebEnginePage* WebEnginePage::createWindow(QWebEnginePage::WebWindowType type) 
         qInfo() << "Create Window Type: " << type;
 
         if (browser != nullptr) {
-            auto webView = dynamic_cast<Browser*>(browser);
-            if (webView) {
-                return webView->add_tab(QUrl("https://google.com"));
+            auto tabbedBrowser = dynamic_cast<Browser*>(browser);
+            if (tabbedBrowser) {
+                return tabbedBrowser->add_tab(QUrl("https://google.com"));
             }
         }
 
