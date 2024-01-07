@@ -1,17 +1,16 @@
 #include "mdisubwindow.h"
 #include <QKeyEvent>
 #include <QDebug>
-#include <QCoreApplication>
+#include <QMdiArea>
+#include <QApplication>
 
 MdiSubWindow::MdiSubWindow(QWidget *parent) : QMdiSubWindow(parent) {
 }
-void MdiSubWindow::changeEvent(QEvent *event) {
-    if (event->type() == QEvent::ActivationChange) {
-        if (isActiveWindow()) {
-            // Subwindow is activated, set focus to the internal widget
-            widget()->setFocus();
-        }
+bool MdiSubWindow::event(QEvent *event) {
+    if (event->type() == QEvent::MouseButtonPress) {
+        mdiArea()->activateWindow();
+        widget()->setFocus();
     }
-
-    QMdiSubWindow::changeEvent(event);
+    //qApp->processEvents();
+    return QMdiSubWindow::event(event);
 }

@@ -23,6 +23,7 @@ SOURCES += \
     calculator.cpp \
     videoplayer.cpp \
     filebrowser.cpp \
+    mdisubwindow.cpp \
     statusbar.cpp \
     main.cpp
 
@@ -34,6 +35,7 @@ HEADERS += \
     calculator.h \
     videoplayer.h \
     filebrowser.h \
+    mdisubwindow.h \
     statusbar.h
 
 LIBS += -lqtermwidget5 

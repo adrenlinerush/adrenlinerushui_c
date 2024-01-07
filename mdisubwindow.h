@@ -9,7 +9,7 @@ public:
     MdiSubWindow(QWidget *parent = nullptr);
 
 protected:
-    void changeEvent(QEvent *event) override;
+    bool event(QEvent *event) override;
 };
 
 #endif // MDISUBWINDOW_H

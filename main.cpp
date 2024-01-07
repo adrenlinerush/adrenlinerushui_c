@@ -30,7 +30,7 @@
 #include <statusbar.h>
 #include <QDesktopWidget>
 //#include <vncclient.h>
-//#include <mdisubwindow.h>
+#include <mdisubwindow.h>
 
 class MDIArea : public QMdiArea {
 public:
@@ -60,9 +60,20 @@ private:
     bool centered_;
 };
 
-/*class FileBrowser {};
-class VncClient {};
-*/
+class AdrenlinerushUI : public QApplication {
+public:
+    AdrenlinerushUI(int& argc, char** argv) : QApplication(argc, argv) {}
+
+    bool notify(QObject* receiver, QEvent* event) override {
+        try {
+            return QApplication::notify(receiver, event);
+        } catch (const std::exception& e) {
+            qDebug() << "Exception caught: " << e.what();
+            return true;
+        }
+    }
+};
+
 class MainWindow : public QMainWindow {
 
 public:
@@ -95,8 +106,8 @@ public:
             });
 
             setCentralWidget(mdi);
-            add_terminal();
-            add_tabbed_browser();
+            //add_terminal();
+            //add_tabbed_browser();
 
             bar = menuBar();
 
@@ -121,7 +132,7 @@ public:
 
             start_status_bar();
 
-            mdi->tileSubWindows();
+            //mdi->tileSubWindows();
             //show();
 	    //this->repaint();
         } catch (const std::exception& e) {
@@ -130,15 +141,77 @@ public:
         }
     }
 
+    void tileSubWindows() { mdi->tileSubWindows(); }
+
     void setOtherScreen(MainWindow *otherScreen) {
         oScreen = otherScreen;
-        QAction* screenFocus = bar->addAction("Switch Screen Focus");
-	connect(screenFocus, &QAction::triggered, this, &MainWindow::activateOtherScreen);
+        //QAction* screenFocus = bar->addAction("Switch Screen Focus");
+	//connect(screenFocus, &QAction::triggered, this, &MainWindow::activateOtherScreen);
 	shortcut_next_screen = new QShortcut(QKeySequence("Ctrl+S"), this);
         connect(shortcut_next_screen, &QShortcut::activated, this, &MainWindow::activateOtherScreen);
     }
 
+    void addFileBrowser() {
+        try {
+            FileBrowser* widget = new FileBrowser();
+            add_sub_window(widget, "File Browser");
+        } catch (const std::exception& e) {
+            qDebug() << "App::addFileBrowser";
+            qDebug() << e.what();
+        }
+    }
+
+    void add_terminal() {
+        try {
+            QTermWidget *console = new QTermWidget();
+            QFont font = QApplication::font();
+            font.setFamily("Terminus");
+            font.setPointSize(6);
+            console->setTerminalFont(font);
+            console->setColorScheme("Linux");
+            connect(console, &QTermWidget::termKeyPressed, console,
+                   [=](const QKeyEvent *key) -> void {
+                     if (key->matches(QKeySequence::Copy)) {
+                       console->copyClipboard();
+                     } else if (key->matches(QKeySequence::Paste)) {
+                       console->pasteClipboard();
+                     }
+                   });
+            console->setTerminalBackgroundImage("/home/austin/adrenaline.jpg");
+            console->setTerminalBackgroundMode(1);
+            add_sub_window(console, "Terminal");
+        } catch (const std::exception& e) {
+            qDebug() << "App::add_terminal";
+            qDebug() << e.what();
+        }
+    }
+
+    void add_tabbed_browser() {
+        try {
+            Browser* webBrowser = new Browser();
+            add_sub_window(webBrowser, "Web Browser");
+        } catch (const std::exception& e) {
+            qDebug() << "App::tabbed_browser";
+            qDebug() << e.what();
+        }
+    }
+
+    void addMediaPlayer() {
+        try {
+            VideoPlayer* widget = new VideoPlayer();
+            add_sub_window(widget, "Video Player");
+        } catch (const std::exception& e) {
+            qDebug() << "App::addMediaPlayer";
+            qDebug() << e.what();
+        }
+    }
+
 private:
+    void closeEvent(QCloseEvent *event) {
+	    delete this;
+	    event->accept();
+    }
+
     void activateOtherScreen() {
 	    oScreen->activateWindow();
     }
@@ -213,7 +286,7 @@ private:
 
     void add_sub_window(QWidget* widget, const QString& title) {
         try {
-            auto sub = new QMdiSubWindow;
+            auto sub = new MdiSubWindow;
             sub->setWindowIcon(QIcon("adrenaline.png"));
             sub->setWidget(widget);
             sub->setWindowTitle(title);
@@ -222,50 +295,6 @@ private:
             sub->show();
         } catch (const std::exception& e) {
             qDebug() << "App::add_sub_window";
-            qDebug() << e.what();
-        }
-    }
-
-    void add_terminal() {
-        try {
-            QTermWidget *console = new QTermWidget();
-            QFont font = QApplication::font();
-            font.setFamily("Terminus");
-            font.setPointSize(6);
-            console->setTerminalFont(font);
-            console->setColorScheme("Linux");
-            connect(console, &QTermWidget::termKeyPressed, console,
-                   [=](const QKeyEvent *key) -> void {
-                     if (key->matches(QKeySequence::Copy)) {
-                       console->copyClipboard();
-                     } else if (key->matches(QKeySequence::Paste)) {
-                       console->pasteClipboard();
-                     }
-                   });
-            console->setTerminalBackgroundImage("/home/austin/adrenaline.jpg");
-            console->setTerminalBackgroundMode(1);	    
-            add_sub_window(console, "Terminal");
-        } catch (const std::exception& e) {
-            qDebug() << "App::add_terminal";
-            qDebug() << e.what();
-        }
-    }
-
-    void add_tabbed_browser() {
-        try {
-            Browser* webBrowser = new Browser();
-            add_sub_window(webBrowser, "Web Browser");
-        } catch (const std::exception& e) {
-            qDebug() << "App::tabbed_browser";
-            qDebug() << e.what();
-        }
-    }
-       void addMediaPlayer() {
-        try {
-            VideoPlayer* widget = new VideoPlayer();
-            add_sub_window(widget, "Video Player");
-        } catch (const std::exception& e) {
-            qDebug() << "App::addMediaPlayer";
             qDebug() << e.what();
         }
     }
@@ -286,16 +315,6 @@ private:
             add_sub_window(widget, "Calculator");
         } catch (const std::exception& e) {
             qDebug() << "App::addCalculator";
-            qDebug() << e.what();
-        }
-    }
-
-    void addFileBrowser() {
-        try {
-            FileBrowser* widget = new FileBrowser();
-            add_sub_window(widget, "File Browser");
-        } catch (const std::exception& e) {
-            qDebug() << "App::addFileBrowser";
             qDebug() << e.what();
         }
     }
@@ -332,7 +351,7 @@ private:
 int main(int argc, char *argv[])
 {
     setenv("TERM", "konsole-256color", 1); // 1 means overwrite if already exists
-    QApplication a(argc, argv);
+    AdrenlinerushUI a(argc, argv);
     MainWindow w1;
     MainWindow w2;
 
@@ -352,6 +371,10 @@ int main(int argc, char *argv[])
     //w1.setStyleSheet("QMainWindow {background: 'yellow';}");
     QRect rect = widget->screenGeometry(0);
     w1.setFixedSize(rect.width(), rect.height());
+    w1.addMediaPlayer();
+    w1.add_terminal();
+    w1.add_tabbed_browser();
+    w1.tileSubWindows();
     w1.show();
     //Move w2 to Secondary Screen
     if (widget->screenCount() > 1) {
@@ -360,11 +383,13 @@ int main(int argc, char *argv[])
 	w2.setOtherScreen(&w1);
         w2.move(rect.width(), rect.y());
         w2.setFixedSize(rect.width(), rect.height());
+        w2.addFileBrowser();
+        w2.tileSubWindows();
         w2.show();
     }
     int r = a.exec();
-    delete &w1;
-    delete &w2;
+    //delete &w2;
+    //delete &w1;
     return r;
 
 }

@@ -14,6 +14,7 @@
 #include <qtermwidget5/qtermwidget.h>
 #include <QApplication>
 #include <QInputDialog>
+#include <QList>
 
 FileBrowser::FileBrowser(QWidget* parent)
     : QWidget(parent), dir(QDir::homePath()) {
@@ -40,6 +41,8 @@ FileBrowser::FileBrowser(QWidget* parent)
         file_group_layout->addWidget(files);
         splitter->addWidget(file_group);
         splitter->addWidget(view);
+	//splitter->setSizes(QList<int>({1,3}));
+	splitter->setStretchFactor(1,4);
 	layout->addWidget(splitter);
 
         qDebug() << dir;
