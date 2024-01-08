@@ -193,6 +193,7 @@ void FileBrowser::openMediaPlayer(const QString& filepath) {
 	QString filename = QFileInfo(filepath).fileName();
         view->addTab(mediaplayer, filename);
         view->setCurrentIndex(view->count() - 1);
+	view->currentWidget()->setFocus();
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openMediaPlayer";
         qDebug() << e.what();
@@ -222,6 +223,7 @@ void FileBrowser::openTextFile(const QString& filepath) {
 	QString filename = QFileInfo(filepath).fileName();
         view->addTab(console, filename);
         view->setCurrentIndex(view->count() - 1);
+	view->currentWidget()->setFocus();
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openTextFile";
         qDebug() << e.what();
@@ -237,6 +239,7 @@ void FileBrowser::openBrowser(const QString& filepath) {
         DocumentBrowser *mediabrowser = new DocumentBrowser("file://" + filepath);
         view->addTab(mediabrowser, filename);
         view->setCurrentIndex(view->count() - 1);
+	view->currentWidget()->setFocus();
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openBrowser";
         qDebug() << e.what();
