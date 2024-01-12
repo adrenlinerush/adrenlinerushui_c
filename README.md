@@ -11,21 +11,8 @@ QT_QPA_PLATFORM=eglfs
 
 # Multiscreen (on same card) Support
 
-1. create the following directories within /etc/portage/patches/dev-qt/ (any ebuild you're going to compile with QT5_MODULE="qtbase"):
-
-<code>
-qtcore-5.15.11-r1
-qtdbus-5.15.11
-qtgui-5.15.11-r2
-qtnetwork-5.15.11
-qtopengl-5.15.11
-qtsql-5.15.11-r1
-qttest-5.15.11
-qtwidgets-5.15.11-r1
-qtxml-5.15.11
-</code>
-
-2. place multiscreen.patch in each of those directories
+1. create the following directory /etc/portage/patches/dev-qt/qtgui-5.15.11-r2
+2. place both patch files in the directory
 3. then you can emerge the deps (assuming qt 5.15.11)
 4. configure KMS
 <code>
