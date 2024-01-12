@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "mdisubwindow.h"
+#include <unistd.h>
 #include <QApplication>
+
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), oScreen(nullptr) {
@@ -9,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
         setWindowIcon(QIcon("adrenaline.png"));
 
         shortcut_quit = new QShortcut(QKeySequence("Ctrl+Q"), this);
-        connect(shortcut_quit, &QShortcut::activated, qApp, &QApplication::quit);
+        //connect(shortcut_quit, &QShortcut::activated, this, &MainWindow::exitApplication);
+	connect(shortcut_quit, &QShortcut::activated, qApp, &QApplication::quit);
 
         bg_img = QPixmap("adrenaline.jpg");
         mdi = new MDIArea(bg_img);
@@ -35,15 +39,18 @@ MainWindow::MainWindow(QWidget *parent)
 
         bar = menuBar();
 
-        QMenu* start = bar->addMenu("Start");
-        start->addAction("Quit");
-        start->addAction("Terminal");
-        start->addAction("Web Browser");
-        start->addAction("Media Player");
-        start->addAction("Calculator");
-        start->addAction("File Browser");
+        startMenu = bar->addMenu("Start");
+        startMenu->addAction("Quit");
+        startMenu->addAction("Terminal");
+        startMenu->addAction("Web Browser");
+        startMenu->addAction("Media Player");
+        startMenu->addAction("Calculator");
+        startMenu->addAction("File Browser");
         // Add other actions...
-        connect(start, &QMenu::triggered, this, &MainWindow::start);
+        connect(startMenu, &QMenu::triggered, this, &MainWindow::start);
+
+	shortcut_start_menu = new QShortcut(QKeySequence("Alt+S"), this);
+        connect(shortcut_start_menu, &QShortcut::activated, this, &MainWindow::openStartMenu);
 
         QMenu* view = bar->addMenu("View");
         view->addAction("Tile");
@@ -58,6 +65,11 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "MainWindow::__init__";
         qDebug() << e.what();
     }
+}
+
+void MainWindow::openStartMenu() {
+    startMenu->exec(bar->parentWidget()->mapToGlobal(bar->rect().bottomLeft()));
+    //startMenu->exec(bar->rect().bottomLeft());
 }
 
 void MainWindow::tileSubWindows() {
@@ -128,7 +140,26 @@ void MainWindow::addMediaPlayer() {
 void MainWindow::activateOtherScreen() {
     oScreen->activateWindow();
 }
-
+/*
+void MainWindow::exitApplication() {
+    qDebug() << "Exit Application Called";
+    if (oScreen != NULL) {
+        qDebug() << "Second Screen Found";
+        oScreen->close();
+        qDebug() << "Second Screen Closed";
+	//delete oScreen;
+	sleep(5);
+    }
+    close();
+    qDebug() << "Calling qApp->Quit();";
+    try {
+        qApp->quit();
+    } catch (const std::exception& e) {
+	qDebug() << "Error calling qApp->Quit();";
+        qDebug() << e.what();
+    }
+}
+*/
 void MainWindow::paintOtherScreen() {
     qDebug() << "Calling Paint Other Screen";
     oScreen->centralWidget()->setVisible(true);
@@ -152,6 +183,7 @@ void MainWindow::start(QAction* action) {
         addFileBrowser();
     } else if (action->text() == "Quit") {
         qApp->quit();
+	//exitApplication();
     }
 }
 
@@ -181,12 +213,15 @@ void MainWindow::update_window_list(QMdiSubWindow* active_window) {
         windows->addAction(activate_action);
     }
 }
-
+/*
 void MainWindow::closeEvent(QCloseEvent *event) {
-    delete this;
-    event->accept();
+    //status_thread->requestInterruption();
+    //status_thread->quit();
+    //status_thread->wait();
+    //QMainWindow::closeEvent(event);
+    qDebug() << "MainWindow::closeEvent Called.";
 }
-
+*/
 void MainWindow::start_status_bar() {
     try {
         qDebug() << "MainWindow::start_status_bar";

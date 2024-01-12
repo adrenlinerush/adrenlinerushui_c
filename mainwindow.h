@@ -35,11 +35,13 @@ private slots:
     void view(QAction* action);
 
 private:
-    void closeEvent(QCloseEvent *event);
+    //void closeEvent(QCloseEvent *event);
     void start_status_bar();
     void update_window_list(QMdiSubWindow* active_window);
     void add_sub_window(QWidget* widget, const QString& title);
     void addCalculator();
+    void openStartMenu();
+    //void exitApplication();
 
     QShortcut* shortcut_quit;
     QShortcut* shortcut_next_window;
@@ -47,11 +49,13 @@ private:
     QShortcut* shortcut_tile_windows;
     QShortcut* shortcut_restore_window;
     QShortcut* shortcut_maximize_window;
+    QShortcut* shortcut_start_menu;
     QMenuBar* bar;
     MainWindow* oScreen;
 
     QPixmap bg_img;
     MDIArea* mdi;
+    QMenu* startMenu;
     QThread* status_thread;
     StatusBar* status_worker;
 

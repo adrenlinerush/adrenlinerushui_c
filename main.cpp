@@ -52,8 +52,13 @@ int main(int argc, char *argv[])
 {
     setenv("TERM", "konsole-256color", 1); // 1 means overwrite if already exists
     AdrenlinerushUI a(argc, argv);
+    a.setQuitOnLastWindowClosed(false);
     MainWindow w1;
+    w1.setWindowFlags( Qt::Window );
+    w1.setAttribute( Qt::WA_DeleteOnClose, true );
     MainWindow w2;
+    w2.setWindowFlags( Qt::Window );
+    w2.setAttribute( Qt::WA_DeleteOnClose, true );
 
     QFont font = QApplication::font();
     font.setFamily("Terminus");

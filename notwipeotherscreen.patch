@@ -1,0 +1,37 @@
+diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor.cpp src/platformsupport/platformcompositor/qopenglcompositor.cpp
+--- src-dist/platformsupport/platformcompositor/qopenglcompositor.cpp	2024-01-11 16:45:29.328241593 -0500
++++ src/platformsupport/platformcompositor/qopenglcompositor.cpp	2024-01-11 17:26:03.578797789 -0500
+@@ -113,11 +113,20 @@
+ QImage QOpenGLCompositor::grab()
+ {
+     Q_ASSERT(!m_targets.isEmpty());
+-    QOpenGLCompositorTarget *target = m_targets.first();
+-    Q_ASSERT(target->m_context && target->m_targetWindow);
+-    target->m_context->makeCurrent(target->m_targetWindow);
+-    QScopedPointer<QOpenGLFramebufferObject> fbo(new QOpenGLFramebufferObject(target->m_nativeTargetGeometry.size()));
+-    renderAll(fbo.data(), target);
++    int height = 0;;
++    int width = 0;
++    foreach (QOpenGLCompositorTarget *t, m_targets) {
++      if (t->m_nativeTargetGeometry.height() > height) {
++          height = t->m_nativeTargetGeometry.height();
++      }
++      width +=  t->m_nativeTargetGeometry.width();
++    }
++    QScopedPointer<QOpenGLFramebufferObject> fbo(new QOpenGLFramebufferObject(width, height));
++    foreach (QOpenGLCompositorTarget *t, m_targets) {
++        Q_ASSERT(t->m_context && t->m_targetWindow);
++        t->m_context->makeCurrent(t->m_targetWindow);
++        renderAll(fbo.data(), t);
++    }
+     return fbo->toImage();
+ }
+ 
+@@ -137,7 +147,6 @@
+     if (fbo)
+         fbo->bind();
+ 
+-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+     glViewport(0, 0, t->m_nativeTargetGeometry.width(), t->m_nativeTargetGeometry.height());
+ 
+     if (!m_blitter.isCreated())

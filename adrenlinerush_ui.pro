@@ -43,3 +43,5 @@ HEADERS += \
     statusbar.h
 
 LIBS += -lqtermwidget5 
+
+CONFIG+=debug
