@@ -11,7 +11,7 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
         tabs = new QTabWidget(this);
         tabs->setDocumentMode(true);
         connect(tabs, &QTabWidget::tabBarDoubleClicked, this, static_cast<void (Browser::*)()>(&Browser::add_tab));
-        //connect(tabs, &QTabWidget::currentChanged, this, &Browser::update_url_bar);
+        connect(tabs, &QTabWidget::currentChanged, this, &Browser::tab_change);
         tabs->setTabsClosable(true);
         connect(tabs, &QTabWidget::tabCloseRequested, this, &Browser::close_tab);
         layout = new QVBoxLayout(this);
@@ -331,6 +331,15 @@ void Browser::update_url_bar(const QString& url) {
         urlbar->setCursorPosition(0);
     } catch (const std::exception& e) {
         qDebug() << "Browser::updateUrlBar Error: " << e.what();
+    }
+}
+
+void Browser::tab_change(int i) {
+    try { 
+        QWebEngineView* cw = qobject_cast<QWebEngineView*>(tabs->currentWidget());
+	update_url_bar(cw->page()->url().toString());
+    } catch (const std::exception& e) {
+	qDebug() << "Browser::tab_change Error: " << e.what();
     }
 }
 
