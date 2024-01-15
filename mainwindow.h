@@ -26,7 +26,6 @@ public:
     void add_terminal();
     void add_tabbed_browser();
     void addMediaPlayer();
-    void paintOtherScreen();
 
 private slots:
     void activateOtherScreen();
@@ -35,13 +34,11 @@ private slots:
     void view(QAction* action);
 
 private:
-    //void closeEvent(QCloseEvent *event);
     void start_status_bar();
     void update_window_list(QMdiSubWindow* active_window);
     void add_sub_window(QWidget* widget, const QString& title);
     void addCalculator();
     void openStartMenu();
-    //void exitApplication();
 
     QShortcut* shortcut_quit;
     QShortcut* shortcut_next_window;

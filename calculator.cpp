@@ -65,8 +65,6 @@ void Calculator::btnClicked() {
 }
 
 double Calculator::eval(const QString& expression) {
-    // Implement your own evaluation logic here
-    // Note: This is a simple example; a complete implementation should handle more cases
     bool ok;
     double result = expression.toDouble(&ok);
     if (!ok) {

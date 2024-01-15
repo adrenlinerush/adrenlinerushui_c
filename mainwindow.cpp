@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent)
         setWindowIcon(QIcon("adrenaline.png"));
 
         shortcut_quit = new QShortcut(QKeySequence("Ctrl+Q"), this);
-        //connect(shortcut_quit, &QShortcut::activated, this, &MainWindow::exitApplication);
 	connect(shortcut_quit, &QShortcut::activated, qApp, &QApplication::quit);
 
         bg_img = QPixmap("adrenaline.jpg");
@@ -46,7 +45,6 @@ MainWindow::MainWindow(QWidget *parent)
         startMenu->addAction("Media Player");
         startMenu->addAction("Calculator");
         startMenu->addAction("File Browser");
-        // Add other actions...
         connect(startMenu, &QMenu::triggered, this, &MainWindow::start);
 
 	shortcut_start_menu = new QShortcut(QKeySequence("Alt+S"), this);
@@ -69,7 +67,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::openStartMenu() {
     startMenu->exec(bar->parentWidget()->mapToGlobal(bar->rect().bottomLeft()));
-    //startMenu->exec(bar->rect().bottomLeft());
 }
 
 void MainWindow::tileSubWindows() {
@@ -140,33 +137,6 @@ void MainWindow::addMediaPlayer() {
 void MainWindow::activateOtherScreen() {
     oScreen->activateWindow();
 }
-/*
-void MainWindow::exitApplication() {
-    qDebug() << "Exit Application Called";
-    if (oScreen != NULL) {
-        qDebug() << "Second Screen Found";
-        oScreen->close();
-        qDebug() << "Second Screen Closed";
-    }
-    close();
-    qDebug() << "Calling qApp->Quit();";
-    try {
-        qApp->quit();
-    } catch (const std::exception& e) {
-	qDebug() << "Error calling qApp->Quit();";
-        qDebug() << e.what();
-    }
-}
-*/
-void MainWindow::paintOtherScreen() {
-    qDebug() << "Calling Paint Other Screen";
-    oScreen->centralWidget()->setVisible(true);
-    oScreen->centralWidget()->repaint();
-    oScreen->centralWidget()->show();
-    oScreen->centralWidget()->update();
-    qApp->processEvents();
-    qDebug() << "Paint Other Screen Called";
-}
 
 void MainWindow::start(QAction* action) {
     if (action->text() == "Terminal") {
@@ -181,7 +151,6 @@ void MainWindow::start(QAction* action) {
         addFileBrowser();
     } else if (action->text() == "Quit") {
         qApp->quit();
-	//exitApplication();
     }
 }
 
@@ -211,15 +180,7 @@ void MainWindow::update_window_list(QMdiSubWindow* active_window) {
         windows->addAction(activate_action);
     }
 }
-/*
-void MainWindow::closeEvent(QCloseEvent *event) {
-    //status_thread->requestInterruption();
-    //status_thread->quit();
-    //status_thread->wait();
-    //QMainWindow::closeEvent(event);
-    qDebug() << "MainWindow::closeEvent Called.";
-}
-*/
+
 void MainWindow::start_status_bar() {
     try {
         qDebug() << "MainWindow::start_status_bar";

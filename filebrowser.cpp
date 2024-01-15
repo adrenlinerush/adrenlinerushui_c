@@ -41,7 +41,6 @@ FileBrowser::FileBrowser(QWidget* parent)
         file_group_layout->addWidget(files);
         splitter->addWidget(file_group);
         splitter->addWidget(view);
-	//splitter->setSizes(QList<int>({1,3}));
 	splitter->setStretchFactor(1,4);
 	layout->addWidget(splitter);
 
@@ -66,31 +65,24 @@ void FileBrowser::renameTab(int i) {
 bool FileBrowser::isBinaryFile(const std::string& filename) {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
-        //std::cerr << "Error opening file: " << filename << std::endl;
         return false;
     }
 
-    // Read a portion of the file into a vector
     constexpr size_t bufferSize = 1024;
     std::vector<char> buffer(bufferSize);
     file.read(buffer.data(), bufferSize);
 
     if (file.gcount() == 0) {
-        //std::cerr << "Error reading file: " << filename << std::endl;
         return false;
     }
 
-    // Check for the presence of null characters in the buffer
     auto nullCharacter = std::find(buffer.begin(), buffer.end(), '\0');
 
-    // If null characters are found, the file is likely binary
     return nullCharacter != buffer.end();
 }
 
 void FileBrowser::closeTab(int index) {
     try {
-        //view->widget(index)->close();
-        //view->removeTab(index);
 	delete view->widget(index);
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::closeTab";
@@ -101,7 +93,6 @@ void FileBrowser::closeTab(int index) {
 void FileBrowser::updateDirListing() {
     try {
         files->clear();
-        //files->addItem("..");
         dir_display->setText(dir);
 
         QDir directory(dir);
@@ -186,8 +177,6 @@ void FileBrowser::itemActivated() {
 
 void FileBrowser::openMediaPlayer(const QString& filepath) {
     try {
-        // Implement the logic to open media player
-        // You can replace the following line with the actual implementation
         qDebug() << "Open Media Player: " << filepath;
         VideoPlayer *mediaplayer = new VideoPlayer(filepath, false);
 	QString filename = QFileInfo(filepath).fileName();
@@ -202,8 +191,6 @@ void FileBrowser::openMediaPlayer(const QString& filepath) {
 
 void FileBrowser::openTextFile(const QString& filepath) {
     try {
-        // Implement the logic to open text file
-        // You can replace the following line with the actual implementation
         qDebug() << "Open Text File: " << filepath;
         QTermWidget *console = new QTermWidget();
         QFont font = QApplication::font();
@@ -232,8 +219,6 @@ void FileBrowser::openTextFile(const QString& filepath) {
 
 void FileBrowser::openBrowser(const QString& filepath) {
     try {
-        // Implement the logic to open browser
-        // You can replace the following line with the actual implementation
         qDebug() << "Open Browser: " << filepath;
 	QString filename = QFileInfo(filepath).fileName();
         DocumentBrowser *mediabrowser = new DocumentBrowser("file://" + filepath);
