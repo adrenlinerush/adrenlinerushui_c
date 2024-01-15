@@ -1,6 +1,6 @@
 diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor.cpp src/platformsupport/platformcompositor/qopenglcompositor.cpp
 --- a/src/platformsupport/platformcompositor/qopenglcompositor.cpp	2024-01-14 18:51:27.517641500 -0500
-+++ b/src/platformsupport/platformcompositor/qopenglcompositor.cpp	2024-01-14 19:10:07.904775509 -0500
++++ b/src/platformsupport/platformcompositor/qopenglcompositor.cpp	2024-01-14 20:19:32.251156187 -0500
 @@ -76,9 +76,6 @@
  static QOpenGLCompositor *compositor = 0;
  
@@ -185,7 +185,7 @@ diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor.cpp src/
  }
  
  QOpenGLCompositor *QOpenGLCompositor::instance()
-@@ -305,4 +315,15 @@
+@@ -305,4 +315,20 @@
      }
  }
  
@@ -200,10 +200,15 @@ diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor.cpp src/
 +    return 0;
 +}
 +
++int QOpenGLCompositor::hasTargets()
++{
++	return m_targets.count();
++}
++
  QT_END_NAMESPACE
 diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor_p.h src/platformsupport/platformcompositor/qopenglcompositor_p.h
 --- a/src/platformsupport/platformcompositor/qopenglcompositor_p.h	2024-01-14 18:51:27.517641500 -0500
-+++ b/src/platformsupport/platformcompositor/qopenglcompositor_p.h	2024-01-14 18:36:16.090244184 -0500
++++ b/src/platformsupport/platformcompositor/qopenglcompositor_p.h	2024-01-14 20:16:51.337865563 -0500
 @@ -62,6 +62,20 @@
  class QWindow;
  class QPlatformTextureList;
@@ -240,16 +245,17 @@ diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor_p.h src/
  
      void update();
      QImage grab();
-@@ -94,6 +108,8 @@
+@@ -94,6 +108,9 @@
      void moveToTop(QOpenGLCompositorWindow *window);
      void changeWindowIndex(QOpenGLCompositorWindow *window, int newIdx);
  
 +    int indexOf(QWindow *window);
++    int hasTargets();
 +
  signals:
      void topWindowChanged(QOpenGLCompositorWindow *window);
  
-@@ -104,16 +120,11 @@
+@@ -104,16 +121,11 @@
      QOpenGLCompositor();
      ~QOpenGLCompositor();
  
@@ -271,7 +277,7 @@ diff -ruN src-dist/platformsupport/platformcompositor/qopenglcompositor_p.h src/
  
 diff -ruN src-dist/plugins/platforms/eglfs/api/qeglfswindow.cpp src/plugins/platforms/eglfs/api/qeglfswindow.cpp
 --- a/src/plugins/platforms/eglfs/api/qeglfswindow.cpp	2024-01-14 18:51:27.560642887 -0500
-+++ b/src/plugins/platforms/eglfs/api/qeglfswindow.cpp	2024-01-11 18:46:44.321965806 -0500
++++ b/src/plugins/platforms/eglfs/api/qeglfswindow.cpp	2024-01-14 20:20:44.872543885 -0500
 @@ -144,8 +144,8 @@
          m_rasterCompositingContext->setScreen(window()->screen());
          if (Q_UNLIKELY(!m_rasterCompositingContext->create()))
@@ -283,3 +289,16 @@ diff -ruN src-dist/plugins/platforms/eglfs/api/qeglfswindow.cpp src/plugins/plat
          // If there is a "root" window into which raster and QOpenGLWidget content is
          // composited, all other contexts must share with its context.
          if (!qt_gl_global_share_context())
+@@ -176,8 +176,10 @@
+         invalidateSurface();
+ 
+ #ifndef QT_NO_OPENGL
+-        QOpenGLCompositor::destroy();
+-        delete m_rasterCompositingContext;
++       if (!QOpenGLCompositor::instance()->hasTargets()) {
++            QOpenGLCompositor::destroy();
++            delete m_rasterCompositingContext;
++	}
+ #endif
+     }
+ 

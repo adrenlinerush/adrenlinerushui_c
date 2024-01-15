@@ -147,8 +147,6 @@ void MainWindow::exitApplication() {
         qDebug() << "Second Screen Found";
         oScreen->close();
         qDebug() << "Second Screen Closed";
-	//delete oScreen;
-	sleep(5);
     }
     close();
     qDebug() << "Calling qApp->Quit();";
