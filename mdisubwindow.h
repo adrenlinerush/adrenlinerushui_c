@@ -10,7 +10,6 @@ public:
 
 protected:
     bool event(QEvent *event) override;
-    void changeEvent(QEvent *event) override;
 };
 
 #endif // MDISUBWINDOW_H

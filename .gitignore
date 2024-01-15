@@ -4,3 +4,4 @@ Makefile
 *.o
 *.swp
 src
+src-dist
