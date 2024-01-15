@@ -12,7 +12,7 @@ QT_QPA_PLATFORM=eglfs
 # Multiscreen (on same card) Support
 
 1. create the following directory /etc/portage/patches/dev-qt/qtgui-5.15.11-r2
-2. place both patch files in the directory
+2. place multiscreen.patch in the directory
 3. then you can emerge the deps (assuming qt 5.15.11)
 4. configure KMS
 <code>
