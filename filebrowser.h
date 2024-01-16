@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QSplitter>
 #include <QMessageBox>
+#include <QMenu>
 
 class FileBrowser : public QWidget {
     Q_OBJECT
@@ -25,6 +26,7 @@ private slots:
     void itemActivated();
     bool isBinaryFile(const std::string& filename);
     void renameTab(int i);
+    void showOpenWithMenu(const QPoint &point);
 
 private:
     QHBoxLayout* layout;
@@ -34,12 +36,16 @@ private:
     QTabWidget* view;
     QLineEdit* dir_display;
     QString dir;
-    QSplitter *splitter;
+    QSplitter* splitter;
+    //QMenu* openWith;
 
     void openMediaPlayer(const QString& filepath);
     void openTextFile(const QString& filepath);
     void openBrowser(const QString& filepath);
+    void openTerminal(const QString& cmd, const QString& tabName);
+    void openWithExecute(QAction* action);
 };
 
-#endif // FILEBROWSER_H
+#endif 
+// FILEBROWSER_H
 

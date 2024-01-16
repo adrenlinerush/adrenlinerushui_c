@@ -28,6 +28,11 @@ FileBrowser::FileBrowser(QWidget* parent)
 
         files = new QListWidget();
         connect(files, &QListWidget::itemActivated, this, &FileBrowser::itemActivated);
+
+	files->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(files, &QListWidget::customContextMenuRequested, 
+			        this, &FileBrowser::showOpenWithMenu);
+
         
         view = new QTabWidget();
         view->setTabsClosable(true);
@@ -52,6 +57,34 @@ FileBrowser::FileBrowser(QWidget* parent)
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::__init__";
         qDebug() << e.what();
+    }
+}
+
+void FileBrowser::showOpenWithMenu(const QPoint &point) {
+    qDebug() << "Custom Context Menu Requested";
+    QMenu* openWith = new QMenu;
+    openWith->addAction("Vim");
+    openWith->addAction("Webengine");
+    openWith->addAction("Media Player");
+    openWith->addAction("Bash (Execute)");
+    openWith->addAction("Bash (New Shell Here)");
+    connect(openWith, &QMenu::triggered, this, &FileBrowser::openWithExecute);
+    openWith->exec(mapToGlobal(point));
+}
+
+void FileBrowser::openWithExecute(QAction* action) {
+    QString itemText = files->currentItem()->text();
+    QString path = QDir::cleanPath(dir + "/" + itemText);
+    if (action->text() == "Vim") {
+        openTextFile(path);
+    } else if (action->text() == "Webengine") {
+        openBrowser(path);
+    } else if (action->text() == "Media Player") {
+        openMediaPlayer(path);
+    } else if (action->text() == "Bash (Execute)") {
+        openTerminal(path, "Terminal");
+    } else if (action->text() == "Bash (New Shell Here)") {
+	openTerminal("cd " + dir, "Terminal");
     }
 }
 
@@ -190,8 +223,13 @@ void FileBrowser::openMediaPlayer(const QString& filepath) {
 }
 
 void FileBrowser::openTextFile(const QString& filepath) {
+     QString filename = QFileInfo(filepath).fileName();
+     openTerminal("vim " + filepath, filename);
+}
+
+void FileBrowser::openTerminal(const QString& cmd, const QString& tabName) {
     try {
-        qDebug() << "Open Text File: " << filepath;
+        qDebug() << "Open Terminal Command: " << cmd;
         QTermWidget *console = new QTermWidget();
         QFont font = QApplication::font();
         font.setFamily("Terminus");
@@ -206,9 +244,8 @@ void FileBrowser::openTextFile(const QString& filepath) {
                    console->pasteClipboard();
                  }
                });
-        console->sendText("vim  " + filepath  + "\n");
-	QString filename = QFileInfo(filepath).fileName();
-        view->addTab(console, filename);
+        console->sendText(cmd  + "\n");
+        view->addTab(console, tabName);
         view->setCurrentIndex(view->count() - 1);
 	view->currentWidget()->setFocus();
     } catch (const std::exception& e) {
