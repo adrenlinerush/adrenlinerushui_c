@@ -23,6 +23,7 @@ SOURCES += \
     calculator.cpp \
     videoplayer.cpp \
     filebrowser.cpp \
+    markdownbrowser.cpp \
     mainwindow.cpp \
     mdiarea.cpp \
     mdisubwindow.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     calculator.h \
     videoplayer.h \
     filebrowser.h \
+    markdownbrowser.h \
     mainwindow.h \
     mdiarea.h \
     mdisubwindow.h \

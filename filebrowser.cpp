@@ -2,6 +2,7 @@
 #include "filebrowser.h"
 #include "videoplayer.h"
 #include "documentbrowser.h"
+#include "markdownbrowser.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -65,6 +66,7 @@ void FileBrowser::showOpenWithMenu(const QPoint &point) {
     QMenu* openWith = new QMenu;
     openWith->addAction("Vim");
     openWith->addAction("Webengine");
+    openWith->addAction("Markdown");
     openWith->addAction("Media Player");
     openWith->addAction("Bash (Execute)");
     openWith->addAction("Bash (New Shell Here)");
@@ -77,6 +79,8 @@ void FileBrowser::openWithExecute(QAction* action) {
     QString path = QDir::cleanPath(dir + "/" + itemText);
     if (action->text() == "Vim") {
         openTextFile(path);
+    } else if (action->text() == "Markdown") {
+        markdownViewer(path);
     } else if (action->text() == "Webengine") {
         openBrowser(path);
     } else if (action->text() == "Media Player") {
@@ -264,6 +268,20 @@ void FileBrowser::openBrowser(const QString& filepath) {
 	view->currentWidget()->setFocus();
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openBrowser";
+        qDebug() << e.what();
+    }
+}
+
+void FileBrowser::markdownViewer(const QString& filepath) {
+    try {
+        qDebug() << "Open Markdown Browser: " << filepath;
+        QString filename = QFileInfo(filepath).fileName();
+        MarkdownBrowser *markdownbrowser = new MarkdownBrowser(filepath);
+        view->addTab(markdownbrowser, filename);
+        view->setCurrentIndex(view->count() - 1);
+        view->currentWidget()->setFocus();
+    } catch (const std::exception& e) {
+        qDebug() << "FileBrowser::markdownViewer";
         qDebug() << e.what();
     }
 }

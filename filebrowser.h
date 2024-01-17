@@ -44,6 +44,7 @@ private:
     void openBrowser(const QString& filepath);
     void openTerminal(const QString& cmd, const QString& tabName);
     void openWithExecute(QAction* action);
+    void markdownViewer(const QString& filepath);
 };
 
 #endif 
