@@ -1,6 +1,8 @@
 // markdownbrowser.cpp
 #include "markdownbrowser.h"
 #include <QFile>
+#include <QWebEnginePage>
+#include <QMenu>
 
 MarkdownBrowser::MarkdownBrowser(const QString& path, QWidget* parent)
     : QWidget(parent) {
@@ -12,7 +14,15 @@ MarkdownBrowser::MarkdownBrowser(const QString& path, QWidget* parent)
         layout = new QVBoxLayout(this);
         layout->addWidget(browser);
 
-	BuildHTML(path);
+	markdownPath = path;
+	BuildHTML();
+
+        shortcut_refresh = new QShortcut(QKeySequence("F5"), this);
+        connect(shortcut_refresh, &QShortcut::activated, this, &MarkdownBrowser::BuildHTML);
+        
+        browser->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(browser, &QWebEngineView::customContextMenuRequested,
+            this, &MarkdownBrowser::showContextMenu);
 
         setLayout(layout);
     } catch (const std::exception& e) {
@@ -21,10 +31,24 @@ MarkdownBrowser::MarkdownBrowser(const QString& path, QWidget* parent)
     }
 }
 
-void MarkdownBrowser::BuildHTML(const QString& path) {
+void MarkdownBrowser::showContextMenu(const QPoint &point) {
+    qDebug() << "Custom Context Menu Requested";
+    QMenu* context = new QMenu;
+    context->addAction("Reload Markdown");
+    connect(context, &QMenu::triggered, this, &MarkdownBrowser::contextExecute);
+    context->exec(mapToGlobal(point));
+}
+
+void MarkdownBrowser::contextExecute(QAction* action) {
+    if (action->text() == "Reload Markdown") {
+        BuildHTML();
+    } 
+}
+
+void MarkdownBrowser::BuildHTML() {
    qDebug() << "Building Markdown HTML";
    QFile header("markdown/markdown_header.html");
-   QFile body(path);
+   QFile body(markdownPath);
    QFile footer("markdown/markdown_footer.html");
 
    QString html;

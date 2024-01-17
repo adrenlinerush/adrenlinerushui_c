@@ -7,6 +7,7 @@
 #include <QWebEngineView>
 #include <QWebEngineSettings>
 #include <QUrl>
+#include <QShortcut>
 
 class MarkdownBrowser : public QWidget {
 
@@ -16,8 +17,12 @@ public:
 private:
     QWebEngineView* browser;
     QVBoxLayout* layout;
+    QString markdownPath;
+    QShortcut* shortcut_refresh;
 
-    void BuildHTML(const QString& path);
+    void BuildHTML();
+    void showContextMenu(const QPoint &point);
+    void contextExecute(QAction* action);
 };
 
 #endif // MARKDOWNBROWSER_H
