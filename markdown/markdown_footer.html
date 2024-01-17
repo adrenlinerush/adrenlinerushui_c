@@ -1,6 +1,14 @@
-</div>
+EOF*/
+    var eof = "EOF";
+    var reobj = new RegExp("/\\*"+eof+"\\n[\\s\\S]*?\\n"+eof+"\\*/", "m");
+    str = reobj.exec(markdownContent).toString();
+    str = str.replace(new RegExp("/\\*"+eof+"\\n",'m'),'').toString();
+    return str.replace(new RegExp("\\n"+eof+"\\*/",'m'),'').toString();
+}
+document.getElementById('markdown-container').innerHTML =
+      marked.parse(markdownContent());
+</script>
 
-<script src="markdown/marked.min.js"></script>
 
 </body>
 </html>
