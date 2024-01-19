@@ -22,7 +22,19 @@ void Terminal::handleMousePress(QMouseEvent *event) {
         topLevelWidget()->activateWindow();
         setFocus();
     } else if (event->button() == Qt::RightButton) {
-        
+        QMenu* context = new QMenu;
+        context->addAction("copy");
+        context->addAction("paste");
+        connect(context, &QMenu::triggered, this, &Terminal::contextExecute);
+        context->exec(event->globalPos()); 
+    }
+}
+
+void Terminal::contextExecute(QAction* action) {
+    if (action->text() == "copy") {
+        copyClipboard();
+    } else if (action->text() == "paste") {
+        pasteClipboard();
     }
 }
 

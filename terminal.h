@@ -9,6 +9,7 @@
 #include <QApplication>
 #include <QShortcut>
 #include <QShortcut>
+#include <QMenu>
 
 class Terminal : public QTermWidget
 {
@@ -22,9 +23,7 @@ protected:
     void handleKeyEvents(QKeyEvent *event);
 	
 private:
-    QShortcut* shortcut_copy;
-    QShortcut* shortcut_paste;
-
+    void contextExecute(QAction* action);
 };
 
 #endif // TERMINAL_H
