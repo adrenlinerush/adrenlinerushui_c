@@ -31,6 +31,11 @@ void Terminal::runCommand(QString command) {
     sendText(command + "\n");
 }
 
+void Terminal::setBackground(QString pathToImage) {
+    setTerminalBackgroundImage(pathToImage);
+    setTerminalBackgroundMode(1);
+}
+
 void Terminal::handleKeyEvents(QKeyEvent *event) {
    qDebug() << "key pressed in terminal";
    if (event->matches(QKeySequence::Copy)) {

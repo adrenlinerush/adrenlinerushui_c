@@ -15,6 +15,7 @@ class Terminal : public QTermWidget
 public:
     Terminal(QWidget *parent = nullptr);
     void runCommand(QString command);
+    void setBackground(QString pathToImage);
 
 protected:
     void handleMousePress(QMouseEvent *event);

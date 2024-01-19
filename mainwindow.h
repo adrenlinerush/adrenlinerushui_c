@@ -13,6 +13,7 @@
 #include "browser.h"
 #include "videoplayer.h"
 #include "calculator.h"
+#include "terminal.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -26,6 +27,9 @@ public:
     void add_terminal();
     void add_tabbed_browser();
     void addMediaPlayer();
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 private slots:
     void activateOtherScreen();

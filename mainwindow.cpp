@@ -65,6 +65,12 @@ MainWindow::MainWindow(QWidget *parent)
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent* event) {
+        status_thread->requestInterruption();
+	status_thread->wait();
+        QMainWindow::closeEvent(event);	
+}
+
 void MainWindow::openStartMenu() {
     startMenu->exec(bar->parentWidget()->mapToGlobal(bar->rect().bottomLeft()));
 }
@@ -91,22 +97,8 @@ void MainWindow::addFileBrowser() {
 
 void MainWindow::add_terminal() {
     try {
-            QTermWidget *console = new QTermWidget();
-            QFont font = QApplication::font();
-            font.setFamily("Terminus");
-            font.setPointSize(6);
-            console->setTerminalFont(font);
-            console->setColorScheme("Linux");
-            connect(console, &QTermWidget::termKeyPressed, console,
-                   [=](const QKeyEvent *key) -> void {
-                     if (key->matches(QKeySequence::Copy)) {
-                       console->copyClipboard();
-                     } else if (key->matches(QKeySequence::Paste)) {
-                       console->pasteClipboard();
-                     }
-                   });
-            console->setTerminalBackgroundImage("/home/austin/adrenaline.jpg");
-            console->setTerminalBackgroundMode(1);
+            Terminal *console = new Terminal();
+            console->setBackground("/home/austin/adrenaline.jpg");
             add_sub_window(console, "Terminal");
     } catch (const std::exception& e) {
         qDebug() << "MainWindow::add_terminal";
