@@ -1,6 +1,6 @@
 diff -ruN qtermwidget-1.4.0.dist/lib/qtermwidget.cpp qtermwidget-1.4.0/lib/qtermwidget.cpp
---- qtermwidget-1.4.0.dist/lib/qtermwidget.cpp	2024-01-18 16:18:15.609891396 -0500
-+++ qtermwidget-1.4.0/lib/qtermwidget.cpp	2024-01-19 09:26:12.302612778 -0500
+--- a/lib/qtermwidget.cpp	2024-01-18 16:18:15.609891396 -0500
++++ b/lib/qtermwidget.cpp	2024-01-19 09:26:12.302612778 -0500
 @@ -331,6 +331,8 @@
              this, SIGNAL(termLostFocus()));
      connect(m_impl->m_terminalDisplay, &TerminalDisplay::keyPressedSignal, this,
@@ -11,8 +11,8 @@ diff -ruN qtermwidget-1.4.0.dist/lib/qtermwidget.cpp qtermwidget-1.4.0/lib/qterm
  
      QFont font = QApplication::font();
 diff -ruN qtermwidget-1.4.0.dist/lib/qtermwidget.h qtermwidget-1.4.0/lib/qtermwidget.h
---- qtermwidget-1.4.0.dist/lib/qtermwidget.h	2024-01-18 16:18:15.609891396 -0500
-+++ qtermwidget-1.4.0/lib/qtermwidget.h	2024-01-19 09:20:17.919530634 -0500
+--- a/lib/qtermwidget.h	2024-01-18 16:18:15.609891396 -0500
++++ b/lib/qtermwidget.h	2024-01-19 09:20:17.919530634 -0500
 @@ -267,6 +267,7 @@
      void termLostFocus();
  
@@ -22,8 +22,8 @@ diff -ruN qtermwidget-1.4.0.dist/lib/qtermwidget.h qtermwidget-1.4.0/lib/qtermwi
      void urlActivated(const QUrl&, bool fromContextMenu);
  
 diff -ruN qtermwidget-1.4.0.dist/lib/TerminalDisplay.cpp qtermwidget-1.4.0/lib/TerminalDisplay.cpp
---- qtermwidget-1.4.0.dist/lib/TerminalDisplay.cpp	2024-01-18 16:18:15.607891329 -0500
-+++ qtermwidget-1.4.0/lib/TerminalDisplay.cpp	2024-01-19 09:31:28.437393293 -0500
+--- a/lib/TerminalDisplay.cpp	2024-01-18 16:18:15.607891329 -0500
++++ b/lib/TerminalDisplay.cpp	2024-01-19 09:31:28.437393293 -0500
 @@ -1958,6 +1958,8 @@
      return;
    }
@@ -34,8 +34,8 @@ diff -ruN qtermwidget-1.4.0.dist/lib/TerminalDisplay.cpp qtermwidget-1.4.0/lib/T
  
    if ( !_screenWindow ) return;
 diff -ruN qtermwidget-1.4.0.dist/lib/TerminalDisplay.h qtermwidget-1.4.0/lib/TerminalDisplay.h
---- qtermwidget-1.4.0.dist/lib/TerminalDisplay.h	2024-01-18 16:18:15.607891329 -0500
-+++ qtermwidget-1.4.0/lib/TerminalDisplay.h	2024-01-19 09:25:59.037160407 -0500
+--- a/lib/TerminalDisplay.h	2024-01-18 16:18:15.607891329 -0500
++++ b/lib/TerminalDisplay.h	2024-01-19 09:25:59.037160407 -0500
 @@ -534,6 +534,7 @@
       * Emitted when the user presses a key whilst the terminal widget has focus.
       */
