@@ -3,6 +3,7 @@
 #include "videoplayer.h"
 #include "documentbrowser.h"
 #include "markdownbrowser.h"
+#include "terminal.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -75,21 +76,26 @@ void FileBrowser::showOpenWithMenu(const QPoint &point) {
 }
 
 void FileBrowser::openWithExecute(QAction* action) {
-    QString itemText = files->currentItem()->text();
-    QString path = QDir::cleanPath(dir + "/" + itemText);
-    if (action->text() == "Vim") {
-        openTextFile(path);
-    } else if (action->text() == "Markdown") {
-        markdownViewer(path);
-    } else if (action->text() == "Webengine") {
-        openBrowser(path);
-    } else if (action->text() == "Media Player") {
-        openMediaPlayer(path);
-    } else if (action->text() == "Bash (Execute)") {
-        openTerminal(path, "Terminal");
-    } else if (action->text() == "Bash (New Shell Here)") {
-	openTerminal("cd " + dir, "Terminal");
-    }
+    try {
+	    QString itemText = files->currentItem()->text();
+	    QString path = QDir::cleanPath(dir + "/" + itemText);
+	    if (action->text() == "Vim") {
+		openTextFile(path);
+	    } else if (action->text() == "Markdown") {
+		markdownViewer(path);
+	    } else if (action->text() == "Webengine") {
+		openBrowser(path);
+	    } else if (action->text() == "Media Player") {
+		openMediaPlayer(path);
+	    } else if (action->text() == "Bash (Execute)") {
+		openTerminal(path, "Terminal");
+	    } else if (action->text() == "Bash (New Shell Here)") {
+		openTerminal("cd " + dir, "Terminal");
+	    }
+     } catch (const std::exception& e) {
+            qDebug() << "Error in context menu.";
+	    qDebug() << e.what();
+     }
 }
 
 void FileBrowser::renameTab(int i) {
@@ -234,21 +240,8 @@ void FileBrowser::openTextFile(const QString& filepath) {
 void FileBrowser::openTerminal(const QString& cmd, const QString& tabName) {
     try {
         qDebug() << "Open Terminal Command: " << cmd;
-        QTermWidget *console = new QTermWidget();
-        QFont font = QApplication::font();
-        font.setFamily("Terminus");
-        font.setPointSize(6);
-        console->setTerminalFont(font);
-        console->setColorScheme("Linux");
-        connect(console, &QTermWidget::termKeyPressed, console,
-               [=](const QKeyEvent *key) -> void {
-                 if (key->matches(QKeySequence::Copy)) {
-                   console->copyClipboard();
-                 } else if (key->matches(QKeySequence::Paste)) {
-                   console->pasteClipboard();
-                 }
-               });
-        console->sendText(cmd  + "\n");
+        Terminal *console = new Terminal();
+        console->runCommand(cmd);
         view->addTab(console, tabName);
         view->setCurrentIndex(view->count() - 1);
 	view->currentWidget()->setFocus();

@@ -22,6 +22,7 @@ SOURCES += \
     tinyexpr.c \
     calculator.cpp \
     videoplayer.cpp \
+    terminal.cpp \
     filebrowser.cpp \
     markdownbrowser.cpp \
     mainwindow.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     tinyexpr.h \
     calculator.h \
     videoplayer.h \
+    terminal.h \
     filebrowser.h \
     markdownbrowser.h \
     mainwindow.h \
