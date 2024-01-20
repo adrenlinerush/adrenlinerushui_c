@@ -1,5 +1,6 @@
 #include "browser.h"
 #include "webenginepage.h"
+#include "webengineview.h"
 #include <QInputDialog>
 #include <QFileInfo>
 #include <QFileDialog>
@@ -231,7 +232,7 @@ void Browser::add_tab() {
 
 WebEnginePage* Browser::add_tab(const QUrl& qurl) {
     try {
-        QWebEngineView* webView = new QWebEngineView(tabs);
+        WebEngineView* webView = new WebEngineView(tabs);
         WebEnginePage* page = new WebEnginePage(webView);
 	page->setBrowser(this);
 	connect(page->profile(), &QWebEngineProfile::downloadRequested, this, &Browser::save);

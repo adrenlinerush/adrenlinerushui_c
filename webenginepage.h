@@ -14,14 +14,14 @@
 class WebEnginePage : public QWebEnginePage {
 public:
     explicit WebEnginePage(QObject* parent = nullptr);
-    void setBrowser(QObject* tabbedBrowser);
+    void setBrowser(QWidget* tabbedBrowser);
 
 protected:
     bool certificateError(const QWebEngineCertificateError& error) override;
     QWebEnginePage* createWindow(QWebEnginePage::WebWindowType type) override;
 
 private:
-    QObject* browser;
+    QWidget* browser;
 };
 
 #endif // WEBENGINEPAGE_H

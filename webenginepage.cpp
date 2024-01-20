@@ -6,7 +6,7 @@
 
 WebEnginePage::WebEnginePage(QObject* parent) : QWebEnginePage(parent) {}
 
-void WebEnginePage::setBrowser(QObject* tabbedBrowser) {
+void WebEnginePage::setBrowser(QWidget* tabbedBrowser) {
 	browser = tabbedBrowser;
 }
 
@@ -52,4 +52,3 @@ QWebEnginePage* WebEnginePage::createWindow(QWebEnginePage::WebWindowType type) 
         return nullptr;
     }
 }
-

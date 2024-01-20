@@ -18,6 +18,7 @@ INCLUDEPATH += .
 SOURCES += \
     documentbrowser.cpp \
     webenginepage.cpp\
+    webengineview.cpp \
     browser.cpp \
     tinyexpr.c \
     calculator.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 
 HEADERS += \
     documentbrowser.h \
+    webenginepage.h \
     webenginepage.h \
     browser.h \
     tinyexpr.h \
