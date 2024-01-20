@@ -1,4 +1,5 @@
 #include "browser.h"
+#include "lineedit.h"
 #include "webenginepage.h"
 #include "webengineview.h"
 #include <QInputDialog>
@@ -53,7 +54,7 @@ Browser::Browser(QWidget* parent) : QWidget(parent) {
 	    cw->stop();
         });
         connect(homebtn, &QPushButton::clicked, this, &Browser::go_home);
-        urlbar = new QLineEdit(this);
+        urlbar = new LineEdit(this);
         shortcut_url = new QShortcut(QKeySequence("Ctrl+G"), this);
         connect(shortcut_url, &QShortcut::activated, this, &Browser::focus_urlbar);
         connect(urlbar, &QLineEdit::returnPressed, this, &Browser::goto_url);

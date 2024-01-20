@@ -150,6 +150,9 @@ void FileBrowser::updateDirListing() {
         for (const auto& entry : directory.entryList()) {
             qDebug() << entry;
             files->addItem(entry);
+	    if (!QFileInfo(dir + "/" + entry).isFile()) {
+		   files->item(files->count()-1)->setForeground(Qt::blue);
+	    }
         }
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::updateDirListing";

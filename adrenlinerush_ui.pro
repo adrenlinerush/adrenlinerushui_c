@@ -16,6 +16,7 @@ INCLUDEPATH += .
 
 # Input
 SOURCES += \
+    lineedit.cpp \
     documentbrowser.cpp \
     webenginepage.cpp\
     webengineview.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
+    lineedit.h \
     documentbrowser.h \
     webenginepage.h \
     webenginepage.h \
