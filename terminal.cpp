@@ -54,10 +54,5 @@ void Terminal::handleKeyEvents(QKeyEvent *event) {
         copyClipboard();
    } else if (event->matches(QKeySequence::Paste)) {
         pasteClipboard();
-   } /*(else if (event->matches(QKeySequence::Next_Tab)) {
-        if(QTabWidget *w = qobject_cast<QTabWidget *>(parentWidget())){
-            int i = w->index();
-        }
-   }*/
-
+   } 
 }

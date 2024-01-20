@@ -245,6 +245,11 @@ void FileBrowser::openTerminal(const QString& cmd, const QString& tabName) {
         view->addTab(console, tabName);
         view->setCurrentIndex(view->count() - 1);
 	view->currentWidget()->setFocus();
+	connect(console, &Terminal::finished, [this, console](){
+            int tabIndex = view->indexOf(console);
+            if (tabIndex != -1) {
+                view->removeTab(tabIndex);
+            }});
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::openTextFile";
         qDebug() << e.what();

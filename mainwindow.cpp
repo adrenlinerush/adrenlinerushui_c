@@ -100,6 +100,8 @@ void MainWindow::add_terminal() {
             Terminal *console = new Terminal();
             console->setBackground("/home/austin/adrenaline.jpg");
             add_sub_window(console, "Terminal");
+	    connect(console, &Terminal::finished, [console](){if(console->parent()) {
+                QMetaObject::invokeMethod(console->parent(), "close", Qt::QueuedConnection);}});
     } catch (const std::exception& e) {
         qDebug() << "MainWindow::add_terminal";
         qDebug() << e.what();
@@ -203,6 +205,7 @@ void MainWindow::add_sub_window(QWidget* widget, const QString& title) {
         sub->setWidget(widget);
         sub->setWindowTitle(title);
         sub->setAttribute(Qt::WA_DeleteOnClose);
+	widget->setParent(sub);
         mdi->addSubWindow(sub);
         sub->show();
     } catch (const std::exception& e) {
