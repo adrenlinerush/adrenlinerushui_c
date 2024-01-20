@@ -24,9 +24,11 @@ private slots:
     void closeTab(int index);
     void updateDirListing();
     void itemActivated();
+    void itemClicked();
     bool isBinaryFile(const std::string& filename);
     void renameTab(int i);
     void showOpenWithMenu(const QPoint &point);
+    void tabChanged(int index);
 
 private:
     QHBoxLayout* layout;

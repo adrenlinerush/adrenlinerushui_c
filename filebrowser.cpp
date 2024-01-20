@@ -30,6 +30,7 @@ FileBrowser::FileBrowser(QWidget* parent)
 
         files = new QListWidget();
         connect(files, &QListWidget::itemActivated, this, &FileBrowser::itemActivated);
+        connect(files, &QListWidget::itemClicked, this, &FileBrowser::itemClicked);
 
 	files->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(files, &QListWidget::customContextMenuRequested, 
@@ -40,6 +41,7 @@ FileBrowser::FileBrowser(QWidget* parent)
         view->setTabsClosable(true);
         connect(view, &QTabWidget::tabCloseRequested, this, &FileBrowser::closeTab);
         connect(view, &QTabWidget::tabBarDoubleClicked, this, &FileBrowser::renameTab);
+	connect(view, &QTabWidget::currentChanged, this, &FileBrowser::tabChanged);
 
         dir_display = new QLineEdit();
         dir_display->setReadOnly(true);
@@ -60,6 +62,11 @@ FileBrowser::FileBrowser(QWidget* parent)
         qDebug() << "FileBrowser::__init__";
         qDebug() << e.what();
     }
+}
+
+void FileBrowser::tabChanged(int index) {
+    topLevelWidget()->activateWindow();
+    view->currentWidget()->setFocus();   
 }
 
 void FileBrowser::showOpenWithMenu(const QPoint &point) {
@@ -148,6 +155,11 @@ void FileBrowser::updateDirListing() {
         qDebug() << "FileBrowser::updateDirListing";
         qDebug() << e.what();
     }
+}
+
+void FileBrowser::itemClicked() {
+    topLevelWidget()->activateWindow();
+    files->setFocus();
 }
 
 void FileBrowser::itemActivated() {
