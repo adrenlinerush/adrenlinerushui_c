@@ -1,6 +1,7 @@
 # Install
 
-1. emerge deps
+1. copy patches directory to /etc/portage 
+2. emerge deps
 <pre>
 dev-qt/qtcore-5.15.11-r1:5/5.15.11                                                                                                                 
 dev-qt/qtdbus-5.15.11:5/5.15
@@ -43,9 +44,9 @@ media-plugins/gst-plugins-meta alsa dvd ffmpeg flac http mp3 mpeg ogg vorbis
 dev-qt/qtprintsupport cups
 app-text/ghostscript-gpl cups
 </pre>
-2. qmake adrenlinerushui.pro
-3. make
-4. set env vars
+3. qmake adrenlinerushui.pro
+4. make
+5. set env vars
 <pre>
 QT_QPA_EGLFS_KMS_CONFIG=/home/austin/.adrenlinerushui.conf
 QT_QPA_PLATFORM=eglfs
@@ -53,10 +54,8 @@ QT_QPA_PLATFORM=eglfs
 
 # Multiscreen (on same card) Support
 
-1. create the following directory /etc/portage/patches/dev-qt/qtgui-5.15.11-r2
-2. place multiscreen.patch in the directory
-3. then you can emerge the deps (assuming qt 5.15.11)
-4. configure KMS
+1. multiscreen.patch provide support for this 
+2. configure KMS
 <pre>
 {
     "device": "/dev/dri/card0",
