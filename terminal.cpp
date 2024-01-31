@@ -12,8 +12,17 @@ Terminal::Terminal(QWidget *parent)
 	
         setFocusPolicy(Qt::ClickFocus);
 
-        connect(this, &Terminal::termMouseClicked, this, &Terminal::handleMousePress);
         connect(this, &Terminal::termKeyPressed, this, &Terminal::handleKeyEvents);
+        QApplication::instance()->installEventFilter(this);
+}
+
+bool Terminal::eventFilter(QObject *object, QEvent *event) {
+        if (object->parent() == this && event->type() == QEvent::MouseButtonPress) {
+            QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(event);
+	    handleMousePress(mouseEvent);
+        }
+
+        return false;
 }
 
 void Terminal::handleMousePress(QMouseEvent *event) {

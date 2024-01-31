@@ -21,6 +21,9 @@ public:
 protected:
     void handleMousePress(QMouseEvent *event);
     void handleKeyEvents(QKeyEvent *event);
+    bool eventFilter(QObject *object, QEvent *event); 
+
+
 	
 private:
     void contextExecute(QAction* action);
