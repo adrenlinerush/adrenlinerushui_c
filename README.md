@@ -21,7 +21,6 @@ dev-qt/qtwebengine-5.15.11_p20231120:5/5.15
 dev-qt/qtwebview-5.15.11:5/5.15
 dev-qt/qtwidgets-5.15.11-r1:5/5.15
 dev-qt/qtxml-5.15.11:5/5.15
-dev-util/lxqt-build-tools-0.12.0:0
 x11-libs/qtermwidget-1.2.0:0/1.2.0
 </pre>
 with following use flags
