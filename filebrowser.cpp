@@ -9,8 +9,10 @@
 #include <vector>
 #include <algorithm>
 #include <QDir>
+#include <QFile>
 #include <QFont>
 #include <QString>
+#include <QProcess>
 #include <QVector>
 #include <algorithm>
 #include <qtermwidget5/qtermwidget.h>
@@ -76,6 +78,10 @@ void FileBrowser::showOpenWithMenu(const QPoint &point) {
     openWith->addAction("Webengine");
     openWith->addAction("Markdown");
     openWith->addAction("Media Player");
+    //openWith->addAction("Libre Office");
+    openWith->addAction("Delete");
+    openWith->addAction("Create Directory");
+    openWith->addAction("Touch File");
     openWith->addAction("Bash (Execute)");
     openWith->addAction("Bash (New Shell Here)");
     connect(openWith, &QMenu::triggered, this, &FileBrowser::openWithExecute);
@@ -94,6 +100,14 @@ void FileBrowser::openWithExecute(QAction* action) {
 		openBrowser(path);
 	    } else if (action->text() == "Media Player") {
 		openMediaPlayer(path);
+	    } else if (action->text() == "Libre Office") {
+	       openLibreOffice(path);
+	    } else if (action->text() == "Delete") {
+               deletePath(path);
+	    } else if (action->text() == "Create Directory") {
+               createDirectory();
+	    } else if (action->text() == "Touch File") {
+               createFile();
 	    } else if (action->text() == "Bash (Execute)") {
 		openTerminal(path, "Terminal");
 	    } else if (action->text() == "Bash (New Shell Here)") {
@@ -103,6 +117,42 @@ void FileBrowser::openWithExecute(QAction* action) {
             qDebug() << "Error in context menu.";
 	    qDebug() << e.what();
      }
+}
+
+void FileBrowser::deletePath(const QString& path) {
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Confirm Delete",
+        "Are you sure you want to delete this file or directory?\n" + path,
+        QMessageBox::Yes | QMessageBox::No
+    );
+    if (reply == QMessageBox::Yes) {
+        if (QFileInfo(path).isFile()) {
+             QFile::remove(path);
+        } else {
+             QDir dir2rm;
+	     dir2rm.rmdir(path);
+        }
+    }	
+    updateDirListing();
+}
+
+void FileBrowser::createFile() {
+    QString newFile  = QInputDialog::getText(this, "", "What would you like to call the new file:");
+    if (newFile.isEmpty())
+        return;
+    QProcess *process = new QProcess(this);
+    process->startDetached("touch " + dir + "/" + newFile);
+    updateDirListing();
+}
+
+void FileBrowser::createDirectory() {
+    QString newDirectory  = QInputDialog::getText(this, "", "What would you like to call the new directory:");
+    if (newDirectory.isEmpty())
+        return;
+    QDir path(dir);
+    path.mkdir(newDirectory);
+    updateDirListing();
 }
 
 void FileBrowser::renameTab(int i) {
@@ -133,6 +183,9 @@ bool FileBrowser::isBinaryFile(const std::string& filename) {
 
 void FileBrowser::closeTab(int index) {
     try {
+        if (!(view->count() > 1)) {
+	    openTerminal("cd " + dir, "Terminal");
+	}
 	delete view->widget(index);
     } catch (const std::exception& e) {
         qDebug() << "FileBrowser::closeTab";
@@ -202,6 +255,17 @@ void FileBrowser::itemActivated() {
 		       browserList.append("bmp");
 		       browserList.append("png");
 
+		       /*QList<QString> officeList;
+		       officeList.append("doc");
+		       officeList.append("docx");
+		       officeList.append("xls");
+		       officeList.append("xlsx");
+		       officeList.append("odt");
+
+		       if (officeList.contains(suffix)) {
+                               openLibreOffice(path);
+			       return;
+		       }*/
                        if (mediaList.contains(suffix)) { 
 		               openMediaPlayer(path);
 			       return;
@@ -231,6 +295,12 @@ void FileBrowser::itemActivated() {
         qDebug() << "FileBrowser::itemActivated";
         qDebug() << e.what();
     }
+}
+
+void FileBrowser::openLibreOffice(const QString& filepath) {
+   QString  cmd = "libreoffice " + filepath;
+   QProcess *process = new QProcess(this);
+   process->startDetached(cmd);
 }
 
 void FileBrowser::openMediaPlayer(const QString& filepath) {
