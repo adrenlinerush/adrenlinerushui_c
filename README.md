@@ -1,29 +1,9 @@
 # Install
 
-1. copy patches directory to /etc/portage 
-2. emerge deps
-<pre>
-dev-qt/qtcore-5.15.11-r1:5/5.15.11                                                                                                                 
-dev-qt/qtdbus-5.15.11:5/5.15
-dev-qt/qtdeclarative-5.15.11-r2:5/5.15
-dev-qt/qtgraphicaleffects-5.15.11:5
-dev-qt/qtgui-5.15.11-r2:5/5.15.11
-dev-qt/qtmultimedia-5.15.11:5/5.15
-dev-qt/qtnetwork-5.15.11:5/5.15
-dev-qt/qtopengl-5.15.11:5/5.15
-dev-qt/qtprintsupport-5.15.11:5/5.15
-dev-qt/qtquickcontrols-5.15.11:5
-dev-qt/qtquickcontrols2-5.15.11:5/5.15
-dev-qt/qtsql-5.15.11-r1:5/5.15.11
-dev-qt/qttest-5.15.11:5/5.15
-dev-qt/qtwebchannel-5.15.11:5/5.15
-dev-qt/qtwebengine-5.15.11_p20231120:5/5.15
-dev-qt/qtwebview-5.15.11:5/5.15
-dev-qt/qtwidgets-5.15.11-r1:5/5.15
-dev-qt/qtxml-5.15.11:5/5.15
-x11-libs/qtermwidget-1.2.0:0/1.2.0
-</pre>
-with following use flags
+### Gentoo
+
+1. Add my portage [overlay](https://wiki.adrenlinerush.net/doku.php?id=gentoo_portage_overlay).
+2. Set Use Flags 
 <pre>
 media-libs/gst-plugins-base -opengl
 media-libs/freetype static-libs
@@ -43,18 +23,37 @@ media-plugins/gst-plugins-meta alsa dvd ffmpeg flac http mp3 mpeg ogg vorbis
 dev-qt/qtprintsupport cups
 app-text/ghostscript-gpl cups
 </pre>
-3. qmake adrenlinerushui.pro
-4. make
-5. set env vars
+3. Emerge
 <pre>
-QT_QPA_EGLFS_KMS_CONFIG=/home/austin/.adrenlinerushui.conf
+emerge --ask adrenlinerushui
+</pre>
+4. set env vars
+<pre>
 QT_QPA_PLATFORM=eglfs
 </pre>
+or
+<pre>
+QT_QPA_PLATFORM=linuxfb
+</pre>
+5. run it
+<pre>
+adrenlinerusui
+</pre>
 
-# Multiscreen (on same card) Support
+### Armbian Bookworm (aarch64)
 
-1. multiscreen.patch provide support for this 
-2. configure KMS
+*** Multiscreen Support will be pulled in. ***
+
+1. Add my apt [repo](https://wiki.adrenlinerush.net/doku.php?id=armbian_bookworm_aarch64_-_custom_packages).
+2. apt-get update
+3. apt-get install adrelinerushui
+4. adrenlinerushui
+
+### Multiscreen (on same card) Support
+
+1. copy patches /etc/portage - multiscreen.patch provide support for this 
+2. emerge dev-qt/gui
+3. create a conf file
 <pre>
 {
     "device": "/dev/dri/card0",
@@ -77,3 +76,4 @@ QT_QPA_PLATFORM=eglfs
     ]
 }
 </pre>
+4. export QT_QPA_EGLFS_KMS_CONFIG=/path/to/conf
