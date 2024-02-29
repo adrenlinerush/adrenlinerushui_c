@@ -9,12 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), oScreen(nullptr) {
     try {
         //setupFileLogging("~/ui.log");
-        setWindowIcon(QIcon("adrenaline.png"));
+        setWindowIcon(QIcon("/usr/share/adrenlinerushui/adrenaline.png"));
 
         shortcut_quit = new QShortcut(QKeySequence("Ctrl+Q"), this);
 	connect(shortcut_quit, &QShortcut::activated, qApp, &QApplication::quit);
 
-        bg_img = QPixmap("adrenaline.jpg");
+        bg_img = QPixmap("/usr/share/adrenlinerushui/adrenaline.jpg");
         mdi = new MDIArea(bg_img);
         connect(mdi, &MDIArea::subWindowActivated, this, &MainWindow::update_window_list);
 
@@ -98,7 +98,7 @@ void MainWindow::addFileBrowser() {
 void MainWindow::add_terminal() {
     try {
             Terminal *console = new Terminal();
-            console->setBackground("/home/austin/adrenaline.jpg");
+            console->setBackground("/usr/share/adrenlinerushui/adrenaline.jpg");
             add_sub_window(console, "Terminal");
 	    connect(console, &Terminal::finished, [console](){if(console->parent()) {
                 QMetaObject::invokeMethod(console->parent(), "close", Qt::QueuedConnection);}});

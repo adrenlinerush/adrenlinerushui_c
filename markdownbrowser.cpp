@@ -47,9 +47,9 @@ void MarkdownBrowser::contextExecute(QAction* action) {
 
 void MarkdownBrowser::BuildHTML() {
    qDebug() << "Building Markdown HTML";
-   QFile header("markdown/markdown_header.html");
+   QFile header("/usr/share/adrenlinerush/markdown/markdown_header.html");
    QFile body(markdownPath);
-   QFile footer("markdown/markdown_footer.html");
+   QFile footer("/usr/share/adrenlinerush/markdown/markdown_footer.html");
 
    QString html;
 

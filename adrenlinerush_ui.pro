@@ -4,7 +4,7 @@
 QT += core gui network widgets webengine webenginewidgets multimedia multimediawidgets
 
 TEMPLATE = app
-TARGET = AdrenlinerushUI
+TARGET = adrenlinerushui
 INCLUDEPATH += .
 
 # You can make your code fail to compile if you use deprecated APIs.
